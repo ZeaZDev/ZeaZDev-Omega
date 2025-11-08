@@ -1,0 +1,142 @@
+// ZeaZDev [Backend - Prisma Schema] //
+// Project: ZeaZDev FiGaTect Super-App //
+// Version: 1.0.0 (Omega Scaffolding) //
+// Author: ZeaZDev Meta-Intelligence (Generated) //
+// --- DO NOT EDIT HEADER --- //
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  worldIdHash       String?  @unique
+  walletAddress     String   @unique
+  email             String?  @unique
+  username          String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+  
+  // Relationships
+  stakes            Stake[]
+  gameSessions      GameSession[]
+  fintechUser       FintechUser?
+  rewards           RewardClaim[]
+  referrals         Referral[]     @relation("Referrer")
+  referredBy        Referral[]     @relation("Referee")
+  
+  @@index([walletAddress])
+  @@index([worldIdHash])
+}
+
+model Stake {
+  id                String   @id @default(uuid())
+  userId            String
+  amount            String   // Store as string to handle BigInt
+  startTime         DateTime @default(now())
+  lastClaimTime     DateTime @default(now())
+  totalRewardsClaimed String @default("0")
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([active])
+}
+
+model GameSession {
+  id                String   @id @default(uuid())
+  userId            String
+  gameType          String   // "slots", "poker", etc.
+  betAmount         String
+  winAmount         String   @default("0")
+  tokenUsed         String   // "ZEA" or "DING"
+  status            String   // "playing", "won", "lost"
+  txHash            String?  @unique
+  createdAt         DateTime @default(now())
+  completedAt       DateTime?
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([gameType])
+  @@index([status])
+}
+
+model FintechUser {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  cardNumber        String?  @unique
+  cardStatus        String   @default("pending") // "pending", "active", "blocked"
+  bankAccountLinked Boolean  @default(false)
+  kycStatus         String   @default("pending") // "pending", "verified", "rejected"
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions      FintechTransaction[]
+  
+  @@index([userId])
+  @@index([cardNumber])
+}
+
+model FintechTransaction {
+  id                String   @id @default(uuid())
+  fintechUserId     String
+  type              String   // "deposit", "withdrawal", "card_payment"
+  amount            String
+  currency          String   @default("THB")
+  status            String   // "pending", "completed", "failed"
+  txHash            String?
+  externalRef       String?  @unique
+  createdAt         DateTime @default(now())
+  completedAt       DateTime?
+  
+  fintechUser       FintechUser @relation(fields: [fintechUserId], references: [id], onDelete: Cascade)
+  
+  @@index([fintechUserId])
+  @@index([status])
+  @@index([type])
+}
+
+model RewardClaim {
+  id                String   @id @default(uuid())
+  userId            String
+  rewardType        String   // "daily_checkin", "airdrop", "referral"
+  amount            String
+  tokenType         String   // "ZEA" or "DING"
+  nullifierHash     String   @unique
+  txHash            String?  @unique
+  claimed           Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  claimedAt         DateTime?
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([rewardType])
+  @@index([nullifierHash])
+}
+
+model Referral {
+  id                String   @id @default(uuid())
+  referrerId        String
+  refereeId         String
+  rewardClaimed     Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  
+  referrer          User     @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee           User     @relation("Referee", fields: [refereeId], references: [id], onDelete: Cascade)
+  
+  @@unique([referrerId, refereeId])
+  @@index([referrerId])
+  @@index([refereeId])
+}

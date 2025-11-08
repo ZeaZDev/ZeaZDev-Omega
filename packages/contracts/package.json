@@ -1,0 +1,23 @@
+{
+  "name": "@zeazdev/contracts",
+  "version": "1.0.0",
+  "description": "ZeaZDev Smart Contracts - Production-Grade Solidity Contracts",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts",
+    "deploy:testnet": "hardhat run scripts/deploy.ts --network optimismGoerli",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network optimism",
+    "clean": "hardhat clean"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "chai": "^4.3.10",
+    "hardhat": "^2.19.4",
+    "typescript": "^5.3.3"
+  }
+}
