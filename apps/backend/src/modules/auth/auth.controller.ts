@@ -1,8 +1,14 @@
-// ZeaZDev [Backend Controller - Auth] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Backend-Auth
+ * @File: auth.controller.ts
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: Authentication controller handling World ID ZKP verification endpoints
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { WorldcoinService } from './worldcoin.service';

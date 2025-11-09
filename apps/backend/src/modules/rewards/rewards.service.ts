@@ -1,8 +1,14 @@
-// ZeaZDev [Backend Service - Rewards] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Backend-Rewards
+ * @File: rewards.service.ts
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: Rewards service implementing ZKP verification and nullifier tracking
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';

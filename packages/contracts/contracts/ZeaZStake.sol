@@ -1,8 +1,14 @@
-// ZeaZDev [Smart Contract - Staking] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Smart-Contracts-Staking
+ * @File: ZeaZStake.sol
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: Staking contract for ZEA tokens with 10% APY rewards mechanism
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;

@@ -1,8 +1,14 @@
-// ZeaZDev [Frontend Screen - Wallet] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Frontend-Wallet
+ * @File: WalletScreen.tsx
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: Wallet screen displaying token balances and MetaMask integration
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';

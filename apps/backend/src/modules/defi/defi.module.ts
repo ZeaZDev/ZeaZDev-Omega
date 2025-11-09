@@ -1,8 +1,14 @@
-// ZeaZDev [Backend - DeFi Module] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Backend-DeFi
+ * @File: defi.module.ts
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: DeFi module providing decentralized finance services
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 import { Module } from '@nestjs/common';
 import { DefiController } from './defi.controller';

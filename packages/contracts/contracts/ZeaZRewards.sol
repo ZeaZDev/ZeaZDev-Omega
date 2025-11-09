@@ -1,8 +1,14 @@
-// ZeaZDev [Smart Contract - ZKP Rewards] //
-// Project: ZeaZDev FiGaTect Super-App //
-// Version: 1.0.0 (Omega Scaffolding) //
-// Author: ZeaZDev Meta-Intelligence (Generated) //
-// --- DO NOT EDIT HEADER --- //
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Smart-Contracts-Rewards
+ * @File: ZeaZRewards.sol
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-09
+ * @Version: 1.0.0
+ * @Description: ZKP-gated rewards contract for daily check-ins, airdrops, and referral programs
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
 
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;

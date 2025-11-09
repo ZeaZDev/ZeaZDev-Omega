@@ -1,10 +1,17 @@
 #!/bin/bash
+#
+# @Project: ZeaZDev FiGaTect Super-App
+# @Module: DevOps-Installer
+# @File: install.sh
+# @Author: ZeaZDev Enterprises (OMEGA AI)
+# @Date: 2025-11-09
+# @Version: 1.0.0
+# @Description: Automated installer script for setting up development environment
+# @License: ZeaZDev Proprietary License
+# @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+#
 
-# ZeaZDev Automated Installer
-# Project: ZeaZDev FiGaTect Super-App
-# Version: 1.0.0 (Omega Scaffolding)
-# Author: ZeaZDev Meta-Intelligence (Generated)
-# --- DO NOT EDIT HEADER --- //
+
 
 set -e  # Exit on error
 
