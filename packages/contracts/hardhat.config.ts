@@ -27,8 +27,9 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1337,
     },
+    // Optimism (existing)
     optimism: {
-      url: process.env.RPC_URL || "https://mainnet.optimism.io",
+      url: process.env.OPTIMISM_RPC_URL || "https://mainnet.optimism.io",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 10,
     },
@@ -37,10 +38,46 @@ const config: HardhatUserConfig = {
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 420,
     },
+    // Polygon (Phase 6)
+    polygon: {
+      url: process.env.POLYGON_RPC_URL || "https://polygon-rpc.com",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 137,
+    },
+    polygonMumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 80001,
+    },
+    // Arbitrum (Phase 6)
+    arbitrum: {
+      url: process.env.ARBITRUM_RPC_URL || "https://arb1.arbitrum.io/rpc",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 42161,
+    },
+    arbitrumGoerli: {
+      url: "https://goerli-rollup.arbitrum.io/rpc",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 421613,
+    },
+    // Base (Phase 6)
+    base: {
+      url: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 8453,
+    },
+    baseGoerli: {
+      url: "https://goerli.base.org",
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 84531,
+    },
   },
   etherscan: {
     apiKey: {
-      optimisticEthereum: process.env.ETHERSCAN_API_KEY || "",
+      optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY || "",
+      polygon: process.env.POLYGONSCAN_API_KEY || "",
+      arbitrumOne: process.env.ARBISCAN_API_KEY || "",
+      base: process.env.BASESCAN_API_KEY || "",
     },
   },
   paths: {
