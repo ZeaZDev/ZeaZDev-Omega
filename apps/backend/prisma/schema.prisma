@@ -201,3 +201,235 @@ model GameLeaderboard {
   @@index([gameType])
   @@index([totalWinnings])
 }
+
+// Phase 6: Cross-Chain Expansion
+model BridgeTransaction {
+  id                String   @id @default(uuid())
+  userId            String
+  token             String   // "ZEA" or "DING"
+  amount            String
+  sourceChain       Int      // Chain ID
+  targetChain       Int      // Chain ID
+  status            String   // "PENDING", "COMPLETED", "FAILED"
+  transactionHash   String   @unique
+  completionTxHash  String?
+  createdAt         DateTime @default(now())
+  completedAt       DateTime?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([transactionHash])
+}
+
+model LiquidityPool {
+  id                String   @id @default(uuid())
+  tokenA            String
+  tokenB            String
+  reserveA          String
+  reserveB          String
+  totalLiquidity    String   @default("0")
+  chainId           Int
+  contractAddress   String   @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([chainId])
+}
+
+// Phase 7: Advanced GameFi
+model PokerGame {
+  id                String   @id @default(uuid())
+  gameId            String   @unique
+  smallBlind        String
+  bigBlind          String
+  pot               String   @default("0")
+  state             String   // "WAITING", "PREFLOP", "FLOP", "TURN", "RIVER", "SHOWDOWN", "ENDED"
+  token             String   // "ZEA" or "DING"
+  winnerId          String?
+  createdAt         DateTime @default(now())
+  completedAt       DateTime?
+  
+  @@index([gameId])
+  @@index([state])
+}
+
+model RouletteGame {
+  id                String   @id @default(uuid())
+  spinId            String   @unique
+  userId            String
+  result            Int?     // 0-36
+  totalBets         String   @default("0")
+  totalPayout       String   @default("0")
+  createdAt         DateTime @default(now())
+  spunAt            DateTime?
+  
+  @@index([spinId])
+  @@index([userId])
+}
+
+model SportsBet {
+  id                String   @id @default(uuid())
+  userId            String
+  sport             String   // "football", "basketball", etc.
+  eventId           String
+  betType           String   // "match_winner", "over_under", etc.
+  amount            String
+  odds              String
+  token             String   // "ZEA" or "DING"
+  status            String   // "PENDING", "WON", "LOST", "CANCELLED"
+  payout            String   @default("0")
+  createdAt         DateTime @default(now())
+  settledAt         DateTime?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([eventId])
+}
+
+// Phase 8: Enterprise Features
+model WhiteLabelConfig {
+  id                String   @id @default(uuid())
+  orgId             String   @unique
+  orgName           String
+  brandName         String
+  logo              String?
+  primaryColor      String   @default("#4F46E5")
+  secondaryColor    String   @default("#06B6D4")
+  domain            String?  @unique
+  apiKey            String   @unique
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([orgId])
+  @@index([apiKey])
+}
+
+model ApiUsage {
+  id                String   @id @default(uuid())
+  orgId             String
+  endpoint          String
+  method            String
+  requestCount      Int      @default(0)
+  successCount      Int      @default(0)
+  errorCount        Int      @default(0)
+  date              DateTime @default(now())
+  
+  @@index([orgId])
+  @@index([date])
+}
+
+model DeveloperApp {
+  id                String   @id @default(uuid())
+  developerId       String
+  appName           String
+  description       String?
+  apiKey            String   @unique
+  apiSecret         String
+  webhookUrl        String?
+  active            Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([developerId])
+  @@index([apiKey])
+}
+
+// Phase 9: Social & Community
+model UserProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  displayName       String?
+  bio               String?
+  avatar            String?
+  level             Int      @default(1)
+  experience        Int      @default(0)
+  followersCount    Int      @default(0)
+  followingCount    Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model Follow {
+  id                String   @id @default(uuid())
+  followerId        String
+  followingId       String
+  createdAt         DateTime @default(now())
+  
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Achievement {
+  id                String   @id @default(uuid())
+  userId            String
+  achievementType   String   // "first_win", "win_streak_10", etc.
+  title             String
+  description       String
+  icon              String?
+  xpReward          Int      @default(0)
+  unlockedAt        DateTime @default(now())
+  
+  @@index([userId])
+  @@index([achievementType])
+}
+
+model CommunityPost {
+  id                String   @id @default(uuid())
+  userId            String
+  content           String
+  likes             Int      @default(0)
+  comments          Int      @default(0)
+  shares            Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Phase 10: Advanced Analytics & AI
+model UserAnalytics {
+  id                String   @id @default(uuid())
+  userId            String
+  metric            String   // "total_volume", "win_rate", etc.
+  value             String
+  period            String   // "daily", "weekly", "monthly"
+  date              DateTime
+  
+  @@unique([userId, metric, period, date])
+  @@index([userId])
+  @@index([metric])
+  @@index([date])
+}
+
+model AiPrediction {
+  id                String   @id @default(uuid())
+  userId            String
+  predictionType    String   // "game_recommendation", "defi_strategy", etc.
+  prediction        String   // JSON string
+  confidence        Float
+  createdAt         DateTime @default(now())
+  accuracy          Float?   // Measured after outcome
+  
+  @@index([userId])
+  @@index([predictionType])
+}
+
+model FraudAlert {
+  id                String   @id @default(uuid())
+  userId            String
+  alertType         String   // "suspicious_activity", "unusual_bet", etc.
+  severity          String   // "low", "medium", "high", "critical"
+  description       String
+  resolved          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  resolvedAt        DateTime?
+  
+  @@index([userId])
+  @@index([severity])
+  @@index([resolved])
+}

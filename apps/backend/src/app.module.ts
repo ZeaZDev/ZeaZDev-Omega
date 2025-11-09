@@ -18,6 +18,7 @@ import { RewardsModule } from './modules/rewards/rewards.module';
 import { FintechModule } from './modules/fintech/fintech.module';
 import { GameModule } from './modules/game/game.module';
 import { GovernanceModule } from './modules/governance/governance.module';
+import { BridgeModule } from './modules/bridge/bridge.module';
 import { PrismaService } from './prisma.service';
 
 @Module({
@@ -31,6 +32,7 @@ import { PrismaService } from './prisma.service';
     FintechModule,
     GameModule,
     GovernanceModule,
+    BridgeModule,
   ],
   providers: [PrismaService],
 })
