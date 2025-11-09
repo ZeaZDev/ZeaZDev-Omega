@@ -56,8 +56,27 @@ async function main() {
   const zeazStakeAddress = await zeazStake.getAddress();
   console.log("ZeaZStake deployed to:", zeazStakeAddress);
 
+  // Deploy ZeaTreasury
+  console.log("\n5. Deploying ZeaTreasury...");
+  const ZeaTreasury = await ethers.getContractFactory("ZeaTreasury");
+  const zeaTreasury = await ZeaTreasury.deploy(deployer.address);
+  await zeaTreasury.waitForDeployment();
+  const zeaTreasuryAddress = await zeaTreasury.getAddress();
+  console.log("ZeaTreasury deployed to:", zeaTreasuryAddress);
+
+  // Deploy ZeaGovernance
+  console.log("\n6. Deploying ZeaGovernance...");
+  const ZeaGovernance = await ethers.getContractFactory("ZeaGovernance");
+  const zeaGovernance = await ZeaGovernance.deploy(
+    zeaTokenAddress,
+    deployer.address
+  );
+  await zeaGovernance.waitForDeployment();
+  const zeaGovernanceAddress = await zeaGovernance.getAddress();
+  console.log("ZeaGovernance deployed to:", zeaGovernanceAddress);
+
   // Setup permissions
-  console.log("\n5. Setting up permissions...");
+  console.log("\n7. Setting up permissions...");
   
   // Add ZeaZStake as minter for ZeaToken (for staking rewards)
   await zeaToken.addMinter(zeazStakeAddress);
@@ -67,10 +86,19 @@ async function main() {
   await dingToken.addGameContract(zeazRewardsAddress);
   console.log("Added ZeaZRewards as game contract for DingToken");
 
+  // Transfer treasury ownership to governance
+  await zeaTreasury.transferOwnership(zeaGovernanceAddress);
+  console.log("Transferred treasury ownership to governance contract");
+
   // Transfer initial tokens to rewards contract
   const rewardAmount = ethers.parseEther("10000000"); // 10M ZEA for rewards
   await zeaToken.transfer(zeazRewardsAddress, rewardAmount);
   console.log("Transferred 10M ZEA to ZeaZRewards contract");
+
+  // Transfer some tokens to treasury
+  const treasuryAmount = ethers.parseEther("100000000"); // 100M ZEA for treasury
+  await zeaToken.transfer(zeaTreasuryAddress, treasuryAmount);
+  console.log("Transferred 100M ZEA to ZeaTreasury contract");
 
   // Summary
   console.log("\n======================================");
@@ -80,6 +108,8 @@ async function main() {
   console.log("DingToken ($DING):", dingTokenAddress);
   console.log("ZeaZRewards:", zeazRewardsAddress);
   console.log("ZeaZStake:", zeazStakeAddress);
+  console.log("ZeaTreasury:", zeaTreasuryAddress);
+  console.log("ZeaGovernance:", zeaGovernanceAddress);
   console.log("======================================");
   console.log("\nUpdate your .env file with these addresses!");
 }

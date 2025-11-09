@@ -58,4 +58,11 @@ export class GameController {
   async getSession(@Param('sessionId') sessionId: string) {
     return this.gameService.getSession(sessionId);
   }
+
+  @Get('leaderboard/:gameType?')
+  async getLeaderboard(
+    @Param('gameType') gameType?: string,
+  ) {
+    return this.gameService.getLeaderboard(gameType || 'slots', 10);
+  }
 }

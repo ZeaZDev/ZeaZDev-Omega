@@ -88,6 +88,9 @@ export class GameService {
         },
       });
 
+      // Update leaderboard
+      await this.updateLeaderboard(session.userId, session.gameType, result, winAmount);
+
       return {
         success: true,
         session: updatedSession,
@@ -97,6 +100,83 @@ export class GameService {
       if (error instanceof HttpException) throw error;
       throw new HttpException('Failed to complete game', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async updateLeaderboard(
+    userId: string,
+    gameType: string,
+    result: 'won' | 'lost',
+    winAmount?: string,
+  ) {
+    try {
+      // Get or create leaderboard entry
+      let leaderboard = await this.prisma.gameLeaderboard.findUnique({
+        where: {
+          userId_gameType: { userId, gameType },
+        },
+      });
+
+      if (!leaderboard) {
+        leaderboard = await this.prisma.gameLeaderboard.create({
+          data: {
+            userId,
+            gameType,
+            totalWins: result === 'won' ? 1 : 0,
+            totalLosses: result === 'lost' ? 1 : 0,
+            totalWinnings: winAmount || '0',
+            highestWin: winAmount || '0',
+            winStreak: result === 'won' ? 1 : 0,
+          },
+        });
+      } else {
+        const newWinStreak = result === 'won' ? leaderboard.winStreak + 1 : 0;
+        const newTotalWinnings = result === 'won'
+          ? (BigInt(leaderboard.totalWinnings) + BigInt(winAmount || '0')).toString()
+          : leaderboard.totalWinnings;
+        const newHighestWin = result === 'won' && winAmount && BigInt(winAmount) > BigInt(leaderboard.highestWin)
+          ? winAmount
+          : leaderboard.highestWin;
+
+        await this.prisma.gameLeaderboard.update({
+          where: {
+            userId_gameType: { userId, gameType },
+          },
+          data: {
+            totalWins: result === 'won' ? leaderboard.totalWins + 1 : leaderboard.totalWins,
+            totalLosses: result === 'lost' ? leaderboard.totalLosses + 1 : leaderboard.totalLosses,
+            totalWinnings: newTotalWinnings,
+            highestWin: newHighestWin,
+            winStreak: newWinStreak,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Failed to update leaderboard:', error);
+    }
+  }
+
+  async getLeaderboard(gameType: string = 'slots', limit: number = 10) {
+    const leaderboard = await this.prisma.gameLeaderboard.findMany({
+      where: { gameType },
+      orderBy: { totalWinnings: 'desc' },
+      take: limit,
+      include: {
+        user: {
+          select: {
+            id: true,
+            walletAddress: true,
+            username: true,
+          },
+        },
+      },
+    });
+
+    return {
+      leaderboard: leaderboard.map((entry, index) => ({
+        ...entry,
+        rank: index + 1,
+      })),
+    };
   }
 
   async getUserSessions(userId: string) {

@@ -30,6 +30,7 @@ model User {
   rewards           RewardClaim[]
   referrals         Referral[]     @relation("Referrer")
   referredBy        Referral[]     @relation("Referee")
+  leaderboard       GameLeaderboard[]
   
   @@index([walletAddress])
   @@index([worldIdHash])
@@ -139,4 +140,64 @@ model Referral {
   @@unique([referrerId, refereeId])
   @@index([referrerId])
   @@index([refereeId])
+}
+
+model GovernanceProposal {
+  id                String   @id @default(uuid())
+  proposalId        String   @unique
+  proposer          String
+  title             String
+  description       String
+  targets           String[] // Array of contract addresses
+  values            String[] // Array of ETH values
+  calldatas         String[] // Array of encoded function calls
+  startBlock        Int
+  endBlock          Int
+  status            String   @default("pending") // "pending", "active", "succeeded", "defeated", "executed", "canceled"
+  forVotes          String   @default("0")
+  againstVotes      String   @default("0")
+  abstainVotes      String   @default("0")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  votes             GovernanceVote[]
+  
+  @@index([proposalId])
+  @@index([status])
+}
+
+model GovernanceVote {
+  id                String   @id @default(uuid())
+  proposalId        String
+  voter             String
+  support           Int      // 0 = against, 1 = for, 2 = abstain
+  votingPower       String
+  createdAt         DateTime @default(now())
+  
+  proposal          GovernanceProposal @relation(fields: [proposalId], references: [proposalId], onDelete: Cascade)
+  
+  @@unique([proposalId, voter])
+  @@index([proposalId])
+  @@index([voter])
+}
+
+model GameLeaderboard {
+  id                String   @id @default(uuid())
+  userId            String
+  gameType          String   // "slots", "poker", etc.
+  totalWins         Int      @default(0)
+  totalLosses       Int      @default(0)
+  totalWinnings     String   @default("0")
+  highestWin        String   @default("0")
+  winStreak         Int      @default(0)
+  rank              Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, gameType])
+  @@index([userId])
+  @@index([gameType])
+  @@index([totalWinnings])
 }
