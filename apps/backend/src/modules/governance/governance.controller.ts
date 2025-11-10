@@ -78,4 +78,17 @@ export class GovernanceController {
     const votingPower = await this.governanceService.getVotingPower(address);
     return { address, votingPower };
   }
+
+  @Post('proposal/:id/execute')
+  async executeProposal(@Param('id') proposalId: string) {
+    return this.governanceService.executeProposal(proposalId);
+  }
+
+  @Post('proposal/:id/cancel')
+  async cancelProposal(
+    @Param('id') proposalId: string,
+    @Body() body: { canceller: string },
+  ) {
+    return this.governanceService.cancelProposal(proposalId, body.canceller);
+  }
 }

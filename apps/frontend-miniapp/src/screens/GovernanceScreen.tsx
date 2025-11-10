@@ -46,44 +46,65 @@ export default function GovernanceScreen() {
 
   const loadProposals = async () => {
     try {
-      // In production, call backend API
-      // const response = await fetch('http://localhost:3000/api/governance/proposals');
-      // const data = await response.json();
-      // setProposals(data);
-      
-      // Mock data for now
-      setProposals([
-        {
-          id: '1',
-          title: 'Increase Staking Rewards to 15% APY',
-          description: 'Proposal to increase the staking rewards from 10% to 15% APY to attract more stakers.',
-          status: 'active',
-          forVotes: '1000000000000000000000000', // 1M votes
-          againstVotes: '500000000000000000000000', // 500K votes
-          abstainVotes: '100000000000000000000000', // 100K votes
-          endBlock: 12345678,
-        },
-      ]);
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/governance/proposals?limit=20`);
+      const data = await response.json();
+      setProposals(data);
     } catch (error) {
       console.error('Failed to load proposals:', error);
+      // Fallback to empty array on error
+      setProposals([]);
     }
   };
 
   const loadVotingPower = async () => {
     try {
-      // In production, call backend API or query blockchain
-      setVotingPower('1000000000000000000000'); // 1000 ZEA
+      // In production, get user's wallet address from auth context
+      const userAddress = '0x1234567890123456789012345678901234567890'; // Placeholder
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/governance/voting-power/${userAddress}`);
+      const data = await response.json();
+      setVotingPower(data.votingPower);
     } catch (error) {
       console.error('Failed to load voting power:', error);
+      setVotingPower('0');
     }
   };
 
   const createProposal = async () => {
     try {
-      // In production, call backend API
-      Alert.alert('Success', 'Proposal created successfully!');
-      setShowCreateProposal(false);
-      loadProposals();
+      if (!newProposal.title || !newProposal.description) {
+        Alert.alert('Error', 'Title and description are required');
+        return;
+      }
+
+      const userAddress = '0x1234567890123456789012345678901234567890'; // Placeholder
+      
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/governance/proposal`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          proposer: userAddress,
+          title: newProposal.title,
+          description: newProposal.description,
+          targets: newProposal.targets ? newProposal.targets.split(',') : [],
+          values: newProposal.values ? newProposal.values.split(',') : [],
+          calldatas: newProposal.calldatas ? newProposal.calldatas.split(',') : [],
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        Alert.alert('Success', 'Proposal created successfully!');
+        setShowCreateProposal(false);
+        setNewProposal({
+          title: '',
+          description: '',
+          targets: '',
+          values: '',
+          calldatas: '',
+        });
+        loadProposals();
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to create proposal');
     }
@@ -91,10 +112,26 @@ export default function GovernanceScreen() {
 
   const vote = async (proposalId: string, support: 0 | 1 | 2) => {
     try {
-      // In production, call backend API
-      const supportText = support === 0 ? 'Against' : support === 1 ? 'For' : 'Abstain';
-      Alert.alert('Success', `Voted ${supportText} on proposal`);
-      loadProposals();
+      const userAddress = '0x1234567890123456789012345678901234567890'; // Placeholder
+      
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/governance/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          proposalId,
+          voter: userAddress,
+          support,
+          votingPower,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        const supportText = support === 0 ? 'Against' : support === 1 ? 'For' : 'Abstain';
+        Alert.alert('Success', `Voted ${supportText} on proposal`);
+        loadProposals();
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to cast vote');
     }
