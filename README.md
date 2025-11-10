@@ -163,12 +163,32 @@ zeazdev-omega/
 
 ### Quick Start
 
+#### Ubuntu (Automated Installation)
+
 ```bash
 # 1. Clone repository
 git clone https://github.com/ZeaZDev/ZeaZDev-Omega.git
 cd ZeaZDev-Omega
 
-# 2. Run automated installer
+# 2. Run Ubuntu automated installer (installs all dependencies)
+chmod +x install-ubuntu.sh
+./install-ubuntu.sh
+
+# 3. Access services
+# - Frontend: http://localhost:8081
+# - Backend: http://localhost:3000
+# - Postgres: localhost:5432
+# - Redis: localhost:6379
+```
+
+#### macOS / Other Linux / Windows (WSL2)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/ZeaZDev/ZeaZDev-Omega.git
+cd ZeaZDev-Omega
+
+# 2. Run automated installer (requires prerequisites installed)
 chmod +x install.sh
 ./install.sh
 
