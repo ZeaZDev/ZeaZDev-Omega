@@ -293,6 +293,15 @@ export class BankThaiService {
     // CRC-16-CCITT implementation
     let crc = 0xFFFF;
     const bytes = Buffer.from(data, 'utf-8');
+    
+    // Validate buffer length to prevent potential DoS attacks
+    const MAX_QR_LENGTH = 512; // PromptPay QR codes are typically < 300 bytes
+    if (bytes.length > MAX_QR_LENGTH) {
+      throw new HttpException(
+        'QR code data too long',
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     for (let i = 0; i < bytes.length; i++) {
       crc ^= bytes[i] << 8;
