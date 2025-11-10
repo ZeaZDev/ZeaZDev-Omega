@@ -306,14 +306,14 @@ export class GameFiService {
     rarity: number,
   ) {
     // Check if user already has this achievement
-    const existing = await this.prisma.nftReward.findFirst({
+    const existing = await this.prisma.nFTReward.findFirst({
       where: { userId, achievementType },
     });
 
     if (existing) return;
 
     // Create NFT reward
-    const nft = await this.prisma.nftReward.create({
+    const nft = await this.prisma.nFTReward.create({
       data: {
         userId,
         achievementType,
@@ -332,7 +332,7 @@ export class GameFiService {
    * Get user's NFT rewards
    */
   async getUserNFTs(userId: string): Promise<NFTReward[]> {
-    const nfts = await this.prisma.nftReward.findMany({
+    const nfts = await this.prisma.nFTReward.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
