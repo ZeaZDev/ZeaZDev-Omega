@@ -15,8 +15,9 @@ This document outlines the operating system and software requirements for develo
 - Apple Silicon (M1/M2/M3) and Intel both supported
 
 **Linux**:
-- Ubuntu 20.04 LTS or later (recommended)
-- Ubuntu 22.04 LTS (tested)
+- Ubuntu 20.04 LTS or later (recommended) - **Automated installer available**
+- Ubuntu 22.04 LTS (tested) - **Automated installer available**
+- Ubuntu 24.04 LTS (tested) - **Automated installer available**
 - Debian 11+ (Bullseye)
 - Fedora 36+
 - Arch Linux (rolling)
@@ -32,6 +33,35 @@ This document outlines the operating system and software requirements for develo
 - macOS 11 (Big Sur) or older
 - 32-bit operating systems
 - ChromeOS / ChromeOS Flex
+
+---
+
+---
+
+## 🚀 Automated Installation (Ubuntu Only)
+
+For Ubuntu users, we provide an automated installer that installs all prerequisites automatically:
+
+```bash
+# Clone repository
+git clone https://github.com/ZeaZDev/ZeaZDev-Omega.git
+cd ZeaZDev-Omega
+
+# Run Ubuntu automated installer
+chmod +x install-ubuntu.sh
+./install-ubuntu.sh
+```
+
+This script will:
+- Detect Ubuntu version and verify compatibility
+- Install Docker and Docker Compose automatically
+- Install Node.js 20 LTS automatically
+- Install pnpm automatically
+- Update Git if needed
+- Set up the project environment
+- Start all services
+
+**For other operating systems**, continue with the manual installation below.
 
 ---
 
