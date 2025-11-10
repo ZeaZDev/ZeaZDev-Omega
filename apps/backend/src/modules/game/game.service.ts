@@ -3,15 +3,35 @@
  * @Module: Backend-Game
  * @File: game.service.ts
  * @Author: ZeaZDev Enterprises (OMEGA AI)
- * @Date: 2025-11-09
- * @Version: 1.0.0
- * @Description: Game service managing Unity WebGL game sessions and crypto payouts
+ * @Date: 2025-11-10
+ * @Version: 2.0.0 (Phase 7: Advanced GameFi)
+ * @Description: Enhanced game service supporting multiple game types: slots, poker, roulette, and sports betting
  * @License: ZeaZDev Proprietary License
  * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
  */
 
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
+
+export interface GameStats {
+  totalGames: number;
+  totalWon: number;
+  totalLost: number;
+  totalWinnings: string;
+  winRate: number;
+}
+
+export interface SportEvent {
+  id: number;
+  sport: string;
+  teamA: string;
+  teamB: string;
+  startTime: Date;
+  status: 'SCHEDULED' | 'LIVE' | 'FINISHED' | 'CANCELLED';
+  oddsTeamA: number;
+  oddsTeamB: number;
+  oddsDraw: number;
+}
 
 @Injectable()
 export class GameService {
@@ -264,5 +284,368 @@ export class GameService {
         symbols[Math.floor(Math.random() * symbols.length)],
       ];
     }
+  }
+
+  /**
+   * POKER GAME METHODS
+   */
+
+  async createPokerGame(
+    userId: string,
+    smallBlind: string,
+    bigBlind: string,
+    token: 'ZEA' | 'DING'
+  ) {
+    try {
+      // Create poker game session
+      const session = await this.prisma.gameSession.create({
+        data: {
+          userId,
+          gameType: 'poker',
+          betAmount: bigBlind,
+          tokenUsed: token,
+          status: 'waiting',
+        },
+      });
+
+      return {
+        success: true,
+        sessionId: session.id,
+        gameType: 'poker',
+        smallBlind,
+        bigBlind,
+        message: 'Poker game created',
+      };
+    } catch (error) {
+      throw new HttpException('Failed to create poker game', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async playPokerHand(
+    sessionId: string,
+    betAmount: string
+  ) {
+    try {
+      const session = await this.prisma.gameSession.findUnique({
+        where: { id: sessionId },
+      });
+
+      if (!session) {
+        throw new HttpException('Session not found', HttpStatus.NOT_FOUND);
+      }
+
+      // Generate poker hand result (mock)
+      const result = this.generatePokerResult(betAmount);
+
+      return {
+        success: true,
+        sessionId: session.id,
+        result,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException('Failed to play poker hand', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private generatePokerResult(betAmount: string) {
+    const hands = [
+      { name: 'Royal Flush', multiplier: 250 },
+      { name: 'Straight Flush', multiplier: 50 },
+      { name: 'Four of a Kind', multiplier: 25 },
+      { name: 'Full House', multiplier: 9 },
+      { name: 'Flush', multiplier: 6 },
+      { name: 'Straight', multiplier: 4 },
+      { name: 'Three of a Kind', multiplier: 3 },
+      { name: 'Two Pair', multiplier: 2 },
+      { name: 'Pair', multiplier: 1 },
+      { name: 'High Card', multiplier: 0 },
+    ];
+
+    const random = Math.random();
+    let selectedHand;
+
+    // Probability distribution
+    if (random < 0.01) selectedHand = hands[0]; // Royal Flush 1%
+    else if (random < 0.03) selectedHand = hands[1]; // Straight Flush 2%
+    else if (random < 0.08) selectedHand = hands[2]; // Four of a Kind 5%
+    else if (random < 0.15) selectedHand = hands[3]; // Full House 7%
+    else if (random < 0.25) selectedHand = hands[4]; // Flush 10%
+    else if (random < 0.35) selectedHand = hands[5]; // Straight 10%
+    else if (random < 0.50) selectedHand = hands[6]; // Three of a Kind 15%
+    else if (random < 0.70) selectedHand = hands[7]; // Two Pair 20%
+    else if (random < 0.85) selectedHand = hands[8]; // Pair 15%
+    else selectedHand = hands[9]; // High Card 15%
+
+    const isWin = selectedHand.multiplier > 0;
+    const winAmount = isWin
+      ? (BigInt(betAmount) * BigInt(selectedHand.multiplier)).toString()
+      : '0';
+
+    return {
+      outcome: isWin ? 'won' : 'lost',
+      hand: selectedHand.name,
+      multiplier: selectedHand.multiplier,
+      winAmount,
+      cards: this.generatePokerCards(),
+    };
+  }
+
+  private generatePokerCards() {
+    const suits = ['♠️', '♥️', '♦️', '♣️'];
+    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const cards = [];
+
+    for (let i = 0; i < 5; i++) {
+      const suit = suits[Math.floor(Math.random() * suits.length)];
+      const rank = ranks[Math.floor(Math.random() * ranks.length)];
+      cards.push(`${rank}${suit}`);
+    }
+
+    return cards;
+  }
+
+  /**
+   * ROULETTE GAME METHODS
+   */
+
+  async playRoulette(
+    userId: string,
+    betAmount: string,
+    betType: 'number' | 'color' | 'even-odd' | 'high-low',
+    betValue: string | number,
+    token: 'ZEA' | 'DING'
+  ) {
+    try {
+      const session = await this.prisma.gameSession.create({
+        data: {
+          userId,
+          gameType: 'roulette',
+          betAmount,
+          tokenUsed: token,
+          status: 'playing',
+        },
+      });
+
+      const result = this.generateRouletteResult(betAmount, betType, betValue);
+
+      // Update session with result
+      await this.prisma.gameSession.update({
+        where: { id: session.id },
+        data: {
+          status: result.outcome,
+          winAmount: result.winAmount,
+          completedAt: new Date(),
+        },
+      });
+
+      await this.updateLeaderboard(userId, 'roulette', result.outcome, result.winAmount);
+
+      return {
+        success: true,
+        sessionId: session.id,
+        result,
+      };
+    } catch (error) {
+      throw new HttpException('Failed to play roulette', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private generateRouletteResult(
+    betAmount: string,
+    betType: string,
+    betValue: string | number
+  ) {
+    const spinResult = Math.floor(Math.random() * 37); // 0-36 (European)
+    const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+    const isRed = redNumbers.includes(spinResult);
+    const isEven = spinResult % 2 === 0 && spinResult !== 0;
+
+    let isWin = false;
+    let multiplier = 0;
+
+    if (betType === 'number' && spinResult === Number(betValue)) {
+      isWin = true;
+      multiplier = 35;
+    } else if (betType === 'color') {
+      if (betValue === 'red' && isRed) {
+        isWin = true;
+        multiplier = 1;
+      } else if (betValue === 'black' && !isRed && spinResult !== 0) {
+        isWin = true;
+        multiplier = 1;
+      }
+    } else if (betType === 'even-odd') {
+      if (betValue === 'even' && isEven) {
+        isWin = true;
+        multiplier = 1;
+      } else if (betValue === 'odd' && !isEven && spinResult !== 0) {
+        isWin = true;
+        multiplier = 1;
+      }
+    } else if (betType === 'high-low') {
+      if (betValue === 'low' && spinResult >= 1 && spinResult <= 18) {
+        isWin = true;
+        multiplier = 1;
+      } else if (betValue === 'high' && spinResult >= 19 && spinResult <= 36) {
+        isWin = true;
+        multiplier = 1;
+      }
+    }
+
+    const winAmount = isWin
+      ? (BigInt(betAmount) * BigInt(multiplier + 1)).toString()
+      : '0';
+
+    return {
+      outcome: isWin ? 'won' : 'lost',
+      spinResult,
+      isRed,
+      isEven,
+      winAmount,
+      multiplier,
+    };
+  }
+
+  /**
+   * SPORTS BETTING METHODS
+   */
+
+  async getSportsEvents(sport?: string, status?: string) {
+    // Mock sports events
+    const events: SportEvent[] = [
+      {
+        id: 1,
+        sport: 'FOOTBALL',
+        teamA: 'Manchester United',
+        teamB: 'Liverpool',
+        startTime: new Date(Date.now() + 86400000), // Tomorrow
+        status: 'SCHEDULED',
+        oddsTeamA: 2.5,
+        oddsTeamB: 1.8,
+        oddsDraw: 3.2,
+      },
+      {
+        id: 2,
+        sport: 'BASKETBALL',
+        teamA: 'LA Lakers',
+        teamB: 'Boston Celtics',
+        startTime: new Date(Date.now() + 172800000), // 2 days
+        status: 'SCHEDULED',
+        oddsTeamA: 1.9,
+        oddsTeamB: 2.1,
+        oddsDraw: 0,
+      },
+      {
+        id: 3,
+        sport: 'ESPORTS',
+        teamA: 'Team Liquid',
+        teamB: 'Cloud9',
+        startTime: new Date(Date.now() + 43200000), // 12 hours
+        status: 'SCHEDULED',
+        oddsTeamA: 1.7,
+        oddsTeamB: 2.3,
+        oddsDraw: 0,
+      },
+    ];
+
+    let filtered = events;
+    if (sport) {
+      filtered = filtered.filter(e => e.sport === sport.toUpperCase());
+    }
+    if (status) {
+      filtered = filtered.filter(e => e.status === status.toUpperCase());
+    }
+
+    return { events: filtered };
+  }
+
+  async placeSportsBet(
+    userId: string,
+    eventId: number,
+    prediction: 'TEAM_A' | 'TEAM_B' | 'DRAW',
+    betAmount: string,
+    token: 'ZEA' | 'DING'
+  ) {
+    try {
+      const { events } = await this.getSportsEvents();
+      const event = events.find(e => e.id === eventId);
+
+      if (!event) {
+        throw new HttpException('Event not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (event.status !== 'SCHEDULED') {
+        throw new HttpException('Event is not open for betting', HttpStatus.BAD_REQUEST);
+      }
+
+      let odds = 0;
+      if (prediction === 'TEAM_A') odds = event.oddsTeamA;
+      else if (prediction === 'TEAM_B') odds = event.oddsTeamB;
+      else odds = event.oddsDraw;
+
+      const potentialPayout = (parseFloat(betAmount) * odds).toFixed(4);
+
+      const session = await this.prisma.gameSession.create({
+        data: {
+          userId,
+          gameType: 'sports',
+          betAmount,
+          tokenUsed: token,
+          status: 'pending',
+        },
+      });
+
+      return {
+        success: true,
+        sessionId: session.id,
+        event,
+        prediction,
+        odds,
+        betAmount,
+        potentialPayout,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) throw error;
+      throw new HttpException('Failed to place sports bet', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * Get all supported game types
+   */
+  async getGameTypes() {
+    return {
+      games: [
+        { id: 'slots', name: 'Slots', icon: '🎰', available: true },
+        { id: 'poker', name: 'Poker', icon: '🃏', available: true },
+        { id: 'roulette', name: 'Roulette', icon: '🎡', available: true },
+        { id: 'sports', name: 'Sports Betting', icon: '⚽', available: true },
+      ],
+    };
+  }
+
+  /**
+   * Get comprehensive game statistics
+   */
+  async getGameStatistics(userId: string): Promise<GameStats> {
+    const sessions = await this.prisma.gameSession.findMany({
+      where: { userId },
+    });
+
+    const totalWon = sessions.filter(s => s.status === 'won').length;
+    const totalLost = sessions.filter(s => s.status === 'lost').length;
+    const totalGames = totalWon + totalLost;
+
+    return {
+      totalGames,
+      totalWon,
+      totalLost,
+      totalWinnings: sessions
+        .filter(s => s.status === 'won')
+        .reduce((sum, s) => sum + BigInt(s.winAmount || '0'), BigInt(0))
+        .toString(),
+      winRate: totalGames > 0 ? (totalWon / totalGames) * 100 : 0,
+    };
   }
 }
