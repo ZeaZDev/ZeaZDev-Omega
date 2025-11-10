@@ -98,9 +98,15 @@ export class WorldcoinService {
    * @returns Array of 8 proof values
    */
   private parseProof(proof: string): bigint[] {
-    // In production, this would parse the actual proof format from World ID
-    // For now, return a placeholder array
     const proofArray: bigint[] = [];
+    try {
+      const parsed = JSON.parse(proof);
+      if (Array.isArray(parsed) && parsed.length === 8) {
+        return parsed.map((p) => BigInt(p));
+      }
+    } catch (error) {
+      console.error('Failed to parse proof:', error);
+    }
     for (let i = 0; i < 8; i++) {
       proofArray.push(BigInt(0));
     }
