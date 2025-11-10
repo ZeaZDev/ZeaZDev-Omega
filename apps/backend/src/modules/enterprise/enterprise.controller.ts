@@ -1,10 +1,25 @@
-import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
+/*
+ * @Project: ZeaZDev FiGaTect Super-App
+ * @Module: Backend-Enterprise
+ * @File: enterprise.controller.ts
+ * @Author: ZeaZDev Enterprises (OMEGA AI)
+ * @Date: 2025-11-10
+ * @Version: 2.0.0 (Phase 8: Enterprise Features)
+ * @Description: Enhanced enterprise controller with white-label, API marketplace, SDK, and plugins
+ * @License: ZeaZDev Proprietary License
+ * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
+ */
+
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { EnterpriseService } from './enterprise.service';
 
 @Controller('enterprise')
 export class EnterpriseController {
   constructor(private readonly enterpriseService: EnterpriseService) {}
 
+  /**
+   * WHITE-LABEL ENDPOINTS
+   */
   @Post('whitelabel')
   async createWhiteLabel(
     @Body()
@@ -50,11 +65,35 @@ export class EnterpriseController {
     return this.enterpriseService.updateWhiteLabel(orgId, data);
   }
 
+  @Get('whitelabel/:orgId/features')
+  async getWhiteLabelFeatures(@Param('orgId') orgId: string) {
+    return this.enterpriseService.getWhiteLabelFeatures(orgId);
+  }
+
+  @Put('whitelabel/:orgId/features')
+  async updateWhiteLabelFeatures(
+    @Param('orgId') orgId: string,
+    @Body() body: { features: string[] },
+  ) {
+    return this.enterpriseService.updateWhiteLabelFeatures(orgId, body.features);
+  }
+
+  /**
+   * API USAGE & ANALYTICS ENDPOINTS
+   */
   @Get('api-usage/:orgId')
   async getApiUsage(@Param('orgId') orgId: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string) {
     return this.enterpriseService.getApiUsage(orgId, new Date(startDate), new Date(endDate));
   }
 
+  @Get('rate-limits')
+  async getRateLimits(@Query('apiKey') apiKey: string) {
+    return this.enterpriseService.getRateLimits(apiKey);
+  }
+
+  /**
+   * DEVELOPER APP ENDPOINTS
+   */
   @Post('developer/app')
   async createDeveloperApp(
     @Body() body: { developerId: string; appName: string; description?: string; webhookUrl?: string },
@@ -73,5 +112,84 @@ export class EnterpriseController {
     @Body() data: { appName?: string; description?: string; webhookUrl?: string; active?: boolean },
   ) {
     return this.enterpriseService.updateDeveloperApp(appId, data);
+  }
+
+  /**
+   * PLUGIN ECOSYSTEM ENDPOINTS
+   */
+  @Get('plugins')
+  async listPlugins(
+    @Query('category') category?: string,
+    @Query('featured') featured?: boolean,
+  ) {
+    return this.enterpriseService.listPlugins(category, featured);
+  }
+
+  @Post('plugins')
+  async createPlugin(
+    @Body() body: {
+      developerId: string;
+      name: string;
+      version: string;
+      description: string;
+      category: string;
+      price: number;
+      sourceCode?: string;
+      manifest?: any;
+    },
+  ) {
+    return this.enterpriseService.createPlugin(
+      body.developerId,
+      body.name,
+      body.version,
+      body.description,
+      body.category,
+      body.price,
+      body.sourceCode,
+      body.manifest,
+    );
+  }
+
+  @Post('plugins/install')
+  async installPlugin(
+    @Body() body: { orgId: string; pluginId: string },
+  ) {
+    return this.enterpriseService.installPlugin(body.orgId, body.pluginId);
+  }
+
+  @Get('plugins/installed/:orgId')
+  async getInstalledPlugins(@Param('orgId') orgId: string) {
+    return this.enterpriseService.getInstalledPlugins(orgId);
+  }
+
+  @Delete('plugins/uninstall')
+  async uninstallPlugin(
+    @Body() body: { orgId: string; pluginId: string },
+  ) {
+    return this.enterpriseService.uninstallPlugin(body.orgId, body.pluginId);
+  }
+
+  /**
+   * SDK & DEVELOPER TOOLS ENDPOINTS
+   */
+  @Get('sdk/list')
+  async getSDKList() {
+    return this.enterpriseService.getSDKList();
+  }
+
+  @Get('sdk/example')
+  async generateSDKExample(
+    @Query('language') language: string,
+    @Query('apiKey') apiKey: string,
+  ) {
+    return this.enterpriseService.generateSDKExample(language, apiKey);
+  }
+
+  /**
+   * API MARKETPLACE ENDPOINTS
+   */
+  @Get('api/endpoints')
+  async getAPIEndpoints() {
+    return this.enterpriseService.getAPIEndpoints();
   }
 }

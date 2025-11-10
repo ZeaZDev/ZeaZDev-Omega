@@ -160,6 +160,8 @@ User Wallet → Staking Contract → Earn Rewards
 User Wallet → Uniswap → Swap to ETH/USDC
 User Wallet → Game Contract → Pay Entry (5% burned)
 User Wallet → Rewards Contract → Claim via ZKP
+Thai Bank (PromptPay) → Top-Up → Mint ZEA → User Wallet
+User Wallet → Fiat Off-Ramp → Thai Bank Account (THB)
 ```
 
 ### DING Flow
@@ -168,6 +170,26 @@ Game Win → Mint DING → User Wallet
 User Wallet → Game Contract → Play Slots
 User Wallet → In-Game Store → Buy Items (burned)
 User Wallet → Swap → Convert to ZEA (future)
+Thai Bank (PromptPay) → Top-Up → Mint DING → User Wallet
+```
+
+### PromptPay On-Ramp Flow
+```
+User: Generate QR Code (amount in THB)
+    ↓
+System: Creates EMV QR with PromptPay ID
+    ↓
+User: Scans QR with Thai Banking App
+    ↓
+User: Confirms Payment (instant)
+    ↓
+Bank: Sends Payment Notification
+    ↓
+System: Verifies Payment
+    ↓
+System: Mints Equivalent ZEA/DING
+    ↓
+User: Receives Crypto (instant)
 ```
 
 ---

@@ -29,25 +29,156 @@ ZeaZDev is built on a **microservices-inspired monorepo architecture** with clea
 │  │  │FinTech  │                                             │   │
 │  │  │ Module  │                                             │   │
 │  │  └─────────┘                                             │   │
+│  │  ┌─────────┐                                             │   │
+│  │  │ Bridge  │ Cross-Chain Module                          │   │
+│  │  │ Module  │                                             │   │
+│  │  └─────────┘                                             │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
            ↓                    ↓                    ↓
 ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│  BLOCKCHAIN      │  │   DATA LAYER     │  │  EXTERNAL APIS   │
+│  MULTI-CHAIN     │  │   DATA LAYER     │  │  EXTERNAL APIS   │
 │  ┌────────────┐  │  │  ┌────────────┐  │  │  ┌────────────┐  │
-│  │ ZEA Token  │  │  │  │ PostgreSQL │  │  │  │  World ID  │  │
-│  │ DING Token │  │  │  │   (Prisma) │  │  │  │   Oracle   │  │
-│  │  Rewards   │  │  │  └────────────┘  │  │  └────────────┘  │
-│  │   Stake    │  │  │  ┌────────────┐  │  │  ┌────────────┐  │
-│  │  Verifier  │  │  │  │   Redis    │  │  │  │  Uniswap   │  │
-│  └────────────┘  │  │  │   Cache    │  │  │  │    V3      │  │
-│  (Optimism L2)   │  │  └────────────┘  │  │  └────────────┘  │
+│  │ Optimism   │  │  │  │ PostgreSQL │  │  │  │  World ID  │  │
+│  │ Polygon    │  │  │  │   (Prisma) │  │  │  │   Oracle   │  │
+│  │ Arbitrum   │  │  │  └────────────┘  │  │  └────────────┘  │
+│  │ Base       │  │  │  ┌────────────┐  │  │  ┌────────────┐  │
+│  │  Bridge    │  │  │  │   Redis    │  │  │  │  Uniswap   │  │
+│  │   Pools    │  │  │  │   Cache    │  │  │  │    V3      │  │
+│  └────────────┘  │  │  └────────────┘  │  │  └────────────┘  │
 └──────────────────┘  └──────────────────┘  │  ┌────────────┐  │
                                              │  │Thai Banks  │  │
                                              │  │ Marqeta    │  │
                                              │  └────────────┘  │
                                              └──────────────────┘
 ```
+
+---
+
+## 🌉 Cross-Chain Bridge Architecture
+
+### Multi-Chain Infrastructure
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    L2 Network Ecosystem                      │
+│                                                               │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │Optimism  │  │ Polygon  │  │ Arbitrum │  │   Base   │   │
+│  │(Chain 10)│  │(Chain137)│  │(Chain    │  │(Chain    │   │
+│  │          │  │          │  │ 42161)   │  │ 8453)    │   │
+│  │ ZEA/DING │  │ ZEA/DING │  │ ZEA/DING │  │ ZEA/DING │   │
+│  │  Bridge  │  │  Bridge  │  │  Bridge  │  │  Bridge  │   │
+│  │   Pool   │  │   Pool   │  │   Pool   │  │   Pool   │   │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘   │
+│       │             │               │             │          │
+│       └─────────────┴───────────────┴─────────────┘          │
+│                           │                                   │
+│                 ┌─────────▼──────────┐                       │
+│                 │  Bridge Relayers   │                       │
+│                 │  (Authorized Only) │                       │
+│                 └─────────┬──────────┘                       │
+│                           │                                   │
+│                 ┌─────────▼──────────┐                       │
+│                 │  Backend Bridge    │                       │
+│                 │     Service        │                       │
+│                 │  - Quote Engine    │                       │
+│                 │  - TX Monitoring   │                       │
+│                 │  - LP Management   │                       │
+│                 └─────────┬──────────┘                       │
+│                           │                                   │
+│                 ┌─────────▼──────────┐                       │
+│                 │   Frontend UI      │                       │
+│                 │  - Bridge Tab      │                       │
+│                 │  - Liquidity Tab   │                       │
+│                 └────────────────────┘                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Bridge Transaction Flow
+
+```
+User Request (Bridge 1000 ZEA from Optimism to Polygon)
+    ↓
+Frontend: Select Source (Optimism) and Target (Polygon)
+    ↓
+Frontend: GET /bridge/quote?amount=1000&sourceChain=10&targetChain=137
+    ↓
+Backend: Calculate Fees
+    - Bridge Fee: 1 ZEA (0.1%)
+    - LP Fee: 0.5 ZEA (0.05%)
+    - Amount After Fees: 998.5 ZEA
+    ↓
+Frontend: Display Quote to User
+    ↓
+User: Approve Transaction in Wallet
+    ↓
+User: Call initiateBridge() on Optimism Bridge Contract
+    ↓
+Smart Contract (Optimism):
+    - Lock 1000 ZEA
+    - Distribute 0.5 ZEA to LP holders
+    - Emit BridgeInitiated Event
+    ↓
+Backend Relayer: Listen for BridgeInitiated Event
+    ↓
+Backend: POST /bridge/initiate
+    - Create DB record
+    - Status: PENDING
+    ↓
+Relayer: Verify Transaction on Source Chain
+    ↓
+Relayer: Call completeBridge() on Polygon Bridge Contract
+    - Release 998.5 ZEA to User
+    - Emit BridgeCompleted Event
+    ↓
+Backend: POST /bridge/complete
+    - Update DB record
+    - Status: COMPLETED
+    ↓
+Frontend: Poll GET /bridge/transaction/:hash
+    ↓
+Frontend: Show Success (1-3 minutes total time)
+    ↓
+User: Receives 998.5 ZEA on Polygon
+```
+
+### Liquidity Pool Economics
+
+**LP Provider Flow**:
+```
+LP Provider: Add 10,000 ZEA to Polygon Pool
+    ↓
+Frontend: POST /bridge/liquidity/add
+    ↓
+Smart Contract:
+    - Transfer 10,000 ZEA from Provider
+    - Calculate LP Shares (1:1 if first LP)
+    - Mint LP Shares to Provider
+    - Add to totalLiquidity
+    ↓
+Provider Earns: 0.05% of all bridge transactions
+    ↓
+APR Calculation:
+    - Daily Volume: 1M ZEA
+    - Daily LP Fees: 500 ZEA (0.05% of 1M)
+    - Annual LP Fees: 182,500 ZEA
+    - Total Pool Liquidity: 5M ZEA
+    - APR: (182,500 / 5,000,000) * 100 = 3.65%
+    - With high volume: 15%+ APR achievable
+```
+
+**Fee Distribution**:
+- 0.10% Bridge Fee → Protocol Treasury
+- 0.05% LP Fee → Liquidity Providers (auto-compounded)
+
+**Supported Networks**:
+| Network | Chain ID | Bridge Time | Gas Cost |
+|---------|----------|-------------|----------|
+| Optimism | 10 | 1 minute | ~$0.10 |
+| Polygon | 137 | 3 minutes | ~$0.05 |
+| Arbitrum One | 42161 | 1 minute | ~$0.15 |
+| Base | 8453 | 1 minute | ~$0.08 |
 
 ---
 
@@ -201,6 +332,52 @@ Backend: Mint Equivalent Crypto
     ↓
 User Receives Crypto
 ```
+
+### PromptPay QR Code Top-Up Flow
+
+```
+User: Click "Generate PromptPay QR"
+    ↓
+Frontend: POST /fintech/promptpay/generate
+    ↓
+Backend: Create Pending Transaction
+    ↓
+Backend: Generate EMV QR Code Payload
+    ↓ (QR includes: PromptPay ID, Amount, Reference)
+Frontend: Display QR Code
+    ↓
+User: Scan QR with Banking App
+    ↓
+User: Confirm Payment in Banking App
+    ↓
+Thai Bank: Process Payment
+    ↓
+Thai Bank: Send Webhook to Backend
+    ↓
+Backend: POST /fintech/promptpay/webhook
+    ↓
+Backend: Update Transaction Status
+    ↓
+Backend: Mint Equivalent Crypto
+    ↓
+Frontend: Poll GET /fintech/promptpay/verify/:id
+    ↓
+Frontend: Show Payment Success
+    ↓
+User: Receives Crypto in Wallet
+```
+
+**PromptPay Technical Details**:
+- **Standard**: EMV QR Code format
+- **PromptPay ID Types**: 
+  - Phone Number (10 digits)
+  - National ID (13 digits)
+  - Tax ID (13 digits)
+- **QR Expiry**: 15 minutes
+- **Payment Verification**: Webhook + polling
+- **Supported Banks**: All Thai banks (SCB, Kbank, BBL, KTB, TMB, etc.)
+- **Transaction Limit**: Per bank policy (typically 50,000 THB/transaction)
+- **Processing Time**: Instant (real-time)
 
 ### Card Issuance Flow
 

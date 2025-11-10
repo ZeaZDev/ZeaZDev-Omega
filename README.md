@@ -145,6 +145,7 @@ zeazdev-omega/
 - **Unity Slots**: Crypto-powered slot game
 - **Real Card**: Apply for physical card
 - **Thai Bank Integration**: Deposit/withdraw THB
+- **PromptPay Top-Up**: Instant QR code payments for crypto top-up
 
 ### 🔐 Security
 - **ZKP Verification**: World ID nullifier hash tracking
