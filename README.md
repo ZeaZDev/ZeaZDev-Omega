@@ -1,4 +1,4 @@
-# ZeaZDev FiGaTect Super-App
+# ZeaZDev-Omega
 
 ## 🌟 Overview
 
