@@ -132,6 +132,7 @@ export class GameFiService {
           betAmount,
           tokenUsed,
           result: won ? 'WON' : 'LOST',
+          status: won ? 'won' : 'lost',
           winAmount,
           metadata: JSON.stringify({
             symbols,

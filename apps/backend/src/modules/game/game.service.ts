@@ -56,10 +56,12 @@ export class GameService {
       // Create game session
       const session = await this.prisma.gameSession.create({
         data: {
+          sessionId: `session_${Date.now()}_${userId.slice(0, 8)}`,
           userId,
           gameType: 'slots',
           betAmount,
           tokenUsed,
+          result: 'PENDING',
           status: 'playing',
           txHash,
         },
@@ -300,10 +302,12 @@ export class GameService {
       // Create poker game session
       const session = await this.prisma.gameSession.create({
         data: {
+          sessionId: `poker_${Date.now()}_${userId.slice(0, 8)}`,
           userId,
           gameType: 'poker',
           betAmount: bigBlind,
           tokenUsed: token,
+          result: 'PENDING',
           status: 'waiting',
         },
       });
@@ -419,10 +423,12 @@ export class GameService {
     try {
       const session = await this.prisma.gameSession.create({
         data: {
+          sessionId: `roulette_${Date.now()}_${userId.slice(0, 8)}`,
           userId,
           gameType: 'roulette',
           betAmount,
           tokenUsed: token,
+          result: 'PENDING',
           status: 'playing',
         },
       });
@@ -588,10 +594,12 @@ export class GameService {
 
       const session = await this.prisma.gameSession.create({
         data: {
+          sessionId: `sports_${Date.now()}_${userId.slice(0, 8)}`,
           userId,
           gameType: 'sports',
           betAmount,
           tokenUsed: token,
+          result: 'PENDING',
           status: 'pending',
         },
       });

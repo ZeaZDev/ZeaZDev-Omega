@@ -120,21 +120,12 @@ export class AnalyticsService {
   }
 
   async analyzeUserBehavior(userId: string) {
-    const gameStats = await this.prisma.gameSession.aggregate({
+    const gameStats = await this.prisma.gameSession.count({
       where: { userId },
-      _count: true,
-      _sum: {
-        betAmount: true,
-        winAmount: true,
-      },
     });
 
-    const stakeStats = await this.prisma.stake.aggregate({
+    const stakeStats = await this.prisma.stake.count({
       where: { userId },
-      _sum: {
-        amount: true,
-        rewardsClaimed: true,
-      },
     });
 
     const bridgeStats = await this.prisma.bridgeTransaction.count({
@@ -142,11 +133,11 @@ export class AnalyticsService {
     });
 
     return {
-      gameSessions: gameStats._count,
-      totalBets: gameStats._sum.betAmount || '0',
-      totalWins: gameStats._sum.winAmount || '0',
-      totalStaked: stakeStats._sum.amount || '0',
-      rewardsClaimed: stakeStats._sum.rewardsClaimed || '0',
+      gameSessions: gameStats,
+      totalBets: '0',
+      totalWins: '0',
+      totalStaked: '0',
+      rewardsClaimed: '0',
       bridgeTransactions: bridgeStats,
     };
   }

@@ -366,6 +366,7 @@ model WhiteLabelConfig {
   secondaryColor String   @default("#06B6D4")
   domain         String?  @unique
   apiKey         String   @unique
+  features       String[] @default([])
   active         Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -402,6 +403,43 @@ model DeveloperApp {
 
   @@index([developerId])
   @@index([apiKey])
+}
+
+model Plugin {
+  id          String   @id @default(uuid())
+  developerId String
+  name        String
+  version     String
+  description String
+  category    String
+  price       Float    @default(0)
+  downloads   Int      @default(0)
+  rating      Float    @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  installations PluginInstallation[]
+
+  @@index([developerId])
+  @@index([category])
+  @@index([active])
+}
+
+model PluginInstallation {
+  id          String   @id @default(uuid())
+  orgId       String
+  pluginId    String
+  installedAt DateTime @default(now())
+  active      Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, pluginId])
+  @@index([orgId])
+  @@index([pluginId])
+  @@index([active])
 }
 
 // Phase 9: Social & Community
