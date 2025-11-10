@@ -202,6 +202,52 @@ Backend: Mint Equivalent Crypto
 User Receives Crypto
 ```
 
+### PromptPay QR Code Top-Up Flow
+
+```
+User: Click "Generate PromptPay QR"
+    ↓
+Frontend: POST /fintech/promptpay/generate
+    ↓
+Backend: Create Pending Transaction
+    ↓
+Backend: Generate EMV QR Code Payload
+    ↓ (QR includes: PromptPay ID, Amount, Reference)
+Frontend: Display QR Code
+    ↓
+User: Scan QR with Banking App
+    ↓
+User: Confirm Payment in Banking App
+    ↓
+Thai Bank: Process Payment
+    ↓
+Thai Bank: Send Webhook to Backend
+    ↓
+Backend: POST /fintech/promptpay/webhook
+    ↓
+Backend: Update Transaction Status
+    ↓
+Backend: Mint Equivalent Crypto
+    ↓
+Frontend: Poll GET /fintech/promptpay/verify/:id
+    ↓
+Frontend: Show Payment Success
+    ↓
+User: Receives Crypto in Wallet
+```
+
+**PromptPay Technical Details**:
+- **Standard**: EMV QR Code format
+- **PromptPay ID Types**: 
+  - Phone Number (10 digits)
+  - National ID (13 digits)
+  - Tax ID (13 digits)
+- **QR Expiry**: 15 minutes
+- **Payment Verification**: Webhook + polling
+- **Supported Banks**: All Thai banks (SCB, Kbank, BBL, KTB, TMB, etc.)
+- **Transaction Limit**: Per bank policy (typically 50,000 THB/transaction)
+- **Processing Time**: Instant (real-time)
+
 ### Card Issuance Flow
 
 ```

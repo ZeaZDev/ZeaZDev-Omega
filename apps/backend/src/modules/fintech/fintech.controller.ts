@@ -4,8 +4,8 @@
  * @File: fintech.controller.ts
  * @Author: ZeaZDev Enterprises (OMEGA AI)
  * @Date: 2025-11-09
- * @Version: 1.0.0
- * @Description: FinTech controller for real card issuance and Thai bank integration
+ * @Version: 2.0.0
+ * @Description: FinTech controller for real card issuance, Thai bank integration, and PromptPay
  * @License: ZeaZDev Proprietary License
  * @Copyright: (c) 2025-2026 ZeaZDev. All rights reserved.
  */
@@ -76,5 +76,47 @@ export class FintechController {
   @Get('transactions/user/:userId')
   async getUserTransactions(@Param('userId') userId: string) {
     return this.bankThaiService.getUserTransactions(userId);
+  }
+
+  /**
+   * Generate PromptPay QR code for top-up
+   */
+  @Post('promptpay/generate')
+  async generatePromptPayQR(
+    @Body() body: {
+      userId: string;
+      amount: string;
+      currency?: string;
+    },
+  ) {
+    return this.bankThaiService.generatePromptPayQR(
+      body.userId,
+      body.amount,
+      body.currency || 'THB',
+    );
+  }
+
+  /**
+   * Verify PromptPay payment status
+   */
+  @Get('promptpay/verify/:transactionId')
+  async verifyPromptPayPayment(@Param('transactionId') transactionId: string) {
+    return this.bankThaiService.verifyPromptPayPayment(transactionId);
+  }
+
+  /**
+   * PromptPay webhook endpoint for payment notifications
+   */
+  @Post('promptpay/webhook')
+  async handlePromptPayWebhook(
+    @Body() body: {
+      transactionRef: string;
+      amount: string;
+      paidAt: string;
+      status: string;
+    },
+  ) {
+    await this.bankThaiService.handlePromptPayWebhook(body);
+    return { success: true };
   }
 }
