@@ -17,19 +17,42 @@ import { DefiService } from './defi.service';
 export class DefiController {
   constructor(private readonly defiService: DefiService) {}
 
-  @Post('swap/quote')
+  @Get('swap/quote')
   async getSwapQuote(
+    @Query('tokenIn') tokenIn: string,
+    @Query('tokenOut') tokenOut: string,
+    @Query('amountIn') amountIn: string,
+  ) {
+    return this.defiService.getSwapQuote(tokenIn, tokenOut, amountIn);
+  }
+
+  @Post('swap/execute')
+  async executeSwap(
     @Body() body: {
+      userAddress: string;
       tokenIn: string;
       tokenOut: string;
       amountIn: string;
+      minAmountOut: string;
+      deadline?: number;
     },
   ) {
-    return this.defiService.getSwapQuote(
+    return this.defiService.executeSwap(
+      body.userAddress,
       body.tokenIn,
       body.tokenOut,
       body.amountIn,
+      body.minAmountOut,
+      body.deadline,
     );
+  }
+
+  @Get('pool/liquidity')
+  async getPoolLiquidity(
+    @Query('tokenA') tokenA: string,
+    @Query('tokenB') tokenB: string,
+  ) {
+    return this.defiService.getPoolLiquidity(tokenA, tokenB);
   }
 
   @Post('stake')
@@ -48,8 +71,21 @@ export class DefiController {
     return this.defiService.claimStakeRewards(stakeId);
   }
 
+  @Post('stake/:id/unstake')
+  async unstake(
+    @Param('id') stakeId: string,
+    @Body() body: { amount: string },
+  ) {
+    return this.defiService.unstake(stakeId, body.amount);
+  }
+
   @Get('stake/user/:userId')
   async getUserStakes(@Param('userId') userId: string) {
     return this.defiService.getUserStakes(userId);
+  }
+
+  @Get('stake/analytics/:userId')
+  async getStakeAnalytics(@Param('userId') userId: string) {
+    return this.defiService.getStakeAnalytics(userId);
   }
 }
