@@ -11,7 +11,7 @@ import { ethers } from 'ethers';
  * - Exchange rate management
  */
 
-interface KYCVerification {
+export interface KYCVerification {
   userId: string;
   level: 'none' | 'basic' | 'standard' | 'premium' | 'enterprise';
   provider: string;
@@ -22,7 +22,7 @@ interface KYCVerification {
   expiresAt?: Date;
 }
 
-interface BankAccount {
+export interface BankAccount {
   accountId: string;
   userId: string;
   bankCode: string;
@@ -34,7 +34,7 @@ interface BankAccount {
   verifiedAt?: Date;
 }
 
-interface FiatTransaction {
+export interface FiatTransaction {
   txId: string;
   userId: string;
   type: 'deposit' | 'withdrawal';
@@ -54,7 +54,7 @@ interface FiatTransaction {
   failureReason?: string;
 }
 
-interface CardDetails {
+export interface CardDetails {
   cardId: string;
   userId: string;
   cardType: 'virtual' | 'physical';

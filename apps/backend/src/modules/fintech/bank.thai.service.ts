@@ -15,14 +15,14 @@ import { PrismaService } from '../../prisma.service';
 import axios from 'axios';
 import * as crypto from 'crypto';
 
-interface PromptPayQRData {
+export interface PromptPayQRData {
   qrCode: string;
   amount: string;
   reference: string;
   expiresAt: Date;
 }
 
-interface PromptPayPaymentStatus {
+export interface PromptPayPaymentStatus {
   transactionId: string;
   status: 'pending' | 'completed' | 'failed' | 'expired';
   amount: string;

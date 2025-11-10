@@ -317,10 +317,6 @@ export class GovernanceService {
         throw new HttpException('Proposal not in succeeded state', HttpStatus.BAD_REQUEST);
       }
 
-      if (proposal.status === 'executed') {
-        throw new HttpException('Proposal already executed', HttpStatus.BAD_REQUEST);
-      }
-
       // In production, this would execute the proposal on-chain via governance contract
       // For now, just mark as executed
       await this.prisma.governanceProposal.update({
