@@ -320,16 +320,7 @@ export class BridgeService {
     return tx ? this.mapToBridgeTransaction(tx) : null;
   }
 
-  /**
-   * Get supported chains
-   */
-  getSupportedChains() {
-    return Object.entries(this.SUPPORTED_CHAINS).map(([name, chainId]) => ({
-      name,
-      chainId,
-      estimatedBridgeTime: this.BRIDGE_TIMES[chainId] || 120,
-    }));
-  }
+
 
   /**
    * Check if chain is supported

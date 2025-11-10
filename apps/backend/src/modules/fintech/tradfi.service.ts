@@ -71,7 +71,7 @@ interface CardDetails {
 
 @Injectable()
 export class TradFiService {
-  private provider: ethers.providers.JsonRpcProvider;
+  private provider: ethers.JsonRpcProvider;
   private bridgeContract: ethers.Contract;
   
   // Supported Thai banks
@@ -109,7 +109,7 @@ export class TradFiService {
   
   constructor() {
     // Initialize in real implementation
-    this.provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+    this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
   }
   
   /**

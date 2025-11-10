@@ -439,7 +439,7 @@ export class GameService {
         },
       });
 
-      await this.updateLeaderboard(userId, 'roulette', result.outcome, result.winAmount);
+      await this.updateLeaderboard(userId, 'roulette', result.outcome as 'won' | 'lost', result.winAmount);
 
       return {
         success: true,
