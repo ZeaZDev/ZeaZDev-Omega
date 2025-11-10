@@ -98,23 +98,28 @@
 **FinTech Features**:
 - **Virtual Card**: Instant issuance
 - **Physical Card**: 7-day delivery
-- **Bank Deposits**: THB → Crypto
+- **PromptPay Top-Up**: Instant QR code payments (Thailand's national payment system)
+- **Bank Deposits**: THB → Crypto via traditional transfer
 - **Bank Withdrawals**: Crypto → THB
 - **Payment Rails**: Visa/Mastercard
 - **Compliance**: Full KYC verification
 
 **Integrations**:
 - **Card Provider**: Marqeta API
+- **PromptPay**: EMV QR Code standard for instant payments
 - **Thai Banks**: 
   - SCB Easy API
   - Kbank Open API
   - BBL Developer Portal
+  - All Thai banks via PromptPay
 - **KYC**: Verify World ID + document verification
 - **Payment Gateway**: Stripe Connect
 
 **Milestones**:
 - [x] Card issuer partnership
 - [x] Thai bank API access
+- [x] PromptPay QR code integration
+- [x] Real-time payment verification
 - [x] KYC flow implementation
 - [x] Regulatory compliance review
 - [x] Fiat gateway launch

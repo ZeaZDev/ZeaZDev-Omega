@@ -397,6 +397,15 @@ Instead:
 - Keep dependencies updated
 - Regular security audits
 
+### PromptPay Security Considerations
+- **QR Code Expiry**: Always set 15-minute expiry on QR codes
+- **Transaction Verification**: Always verify payment via webhook AND polling
+- **Amount Validation**: Validate amount matches QR code generation
+- **Reference Uniqueness**: Use cryptographically secure references
+- **Webhook Authentication**: Verify webhook signatures from Thai banks
+- **Rate Limiting**: Limit QR generation to prevent abuse
+- **Anti-Fraud**: Monitor for suspicious patterns in top-up behavior
+
 ---
 
 ## 📄 Documentation
