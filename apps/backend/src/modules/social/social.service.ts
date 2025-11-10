@@ -184,4 +184,21 @@ export class SocialService {
       orderBy: { unlockedAt: 'desc' },
     });
   }
+
+  async getLeaderboard(limit = 20) {
+    return this.prisma.userProfile.findMany({
+      orderBy: [
+        { level: 'desc' },
+        { experience: 'desc' },
+      ],
+      take: limit,
+      select: {
+        userId: true,
+        displayName: true,
+        avatar: true,
+        level: true,
+        experience: true,
+      },
+    });
+  }
 }
