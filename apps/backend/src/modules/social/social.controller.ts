@@ -59,4 +59,9 @@ export class SocialController {
   async getAchievements(@Param('userId') userId: string) {
     return this.socialService.getAchievements(userId);
   }
+
+  @Get('leaderboard')
+  async getLeaderboard(@Query('limit') limit?: number) {
+    return this.socialService.getLeaderboard(limit || 20);
+  }
 }
