@@ -22,6 +22,10 @@ graph TB
         A4[Reward Screen]
         A5[Game Screen]
         A6[FinTech Screen]
+        A7[Bridge Screen]
+        A8[Governance Screen]
+        A9[Social Screen]
+        A10[Analytics Screen]
     end
 
     subgraph "Backend Layer"
@@ -30,7 +34,12 @@ graph TB
         B2[DeFi Module - Swap/Stake]
         B3[Rewards Module - Claims]
         B4[FinTech Module - Card/Bank]
-        B5[Game Module - Slots]
+        B5[Game Module - Slots/Poker/Roulette/Sports]
+        B6[Bridge Module - Cross-Chain]
+        B7[Governance Module - DAO]
+        B8[Social Module - Profiles]
+        B9[Analytics Module - Metrics]
+        B10[Enterprise Module - White-Label]
     end
 
     subgraph "Blockchain Layer"
@@ -39,12 +48,20 @@ graph TB
         C3[ZeaZRewards - ZKP Gated]
         C4[ZeaZStake - Staking]
         C5[World ID Verifier]
+        C6[ZeaBridge - Cross-Chain]
+        C7[ZeaLiquidityBridge - Bridge LP]
+        C8[ZeaGovernance - DAO]
+        C9[ZeaTreasury - Treasury]
+        C10[Game Contracts - Slots/Poker/Roulette/Sports]
     end
 
     subgraph "Game Layer"
         D[Unity WebGL]
         D1[Slot Machine]
-        D2[Web3 Bridge]
+        D2[Poker]
+        D3[Roulette]
+        D4[Sports Betting]
+        D5[Web3 Bridge]
     end
 
     subgraph "External Services"
@@ -52,6 +69,7 @@ graph TB
         E2[Uniswap]
         E3[Thai Banks]
         E4[Card Issuer API]
+        E5[Multi-Chain Networks]
     end
 
     subgraph "Data Layer"
@@ -70,9 +88,15 @@ graph TB
     B2 --> E2
     B4 --> E3
     B4 --> E4
+    B6 --> C6
+    B6 --> C7
+    B6 --> E5
+    B7 --> C8
+    B7 --> C9
+    B5 --> C10
     B --> F1
     B --> F2
-    D2 --> B5
+    D5 --> B5
 ```
 
 ## 🛠️ Tech Stack
@@ -105,7 +129,7 @@ zeazdev-omega/
 │   │   └── package.json
 │   └── backend/                  # NestJS API
 │       ├── src/
-│       │   ├── modules/          # Auth, DeFi, Rewards, FinTech, Game
+│       │   ├── modules/          # Auth, DeFi, Rewards, FinTech, Game, Bridge, Governance, Social, Analytics, Enterprise
 │       │   ├── main.ts
 │       │   └── app.module.ts
 │       ├── prisma/
@@ -117,7 +141,18 @@ zeazdev-omega/
 │   │   │   ├── ZeaToken.sol      # $ZEA ERC20
 │   │   │   ├── DingToken.sol     # $DING ERC20
 │   │   │   ├── ZeaZRewards.sol   # ZKP rewards
-│   │   │   └── ZeaZStake.sol     # Staking
+│   │   │   ├── ZeaZStake.sol     # Staking
+│   │   │   ├── ZeaBridge.sol     # Cross-chain bridge
+│   │   │   ├── ZeaLiquidityBridge.sol  # Bridge with LP
+│   │   │   ├── ZeaLiquidityPool.sol    # Liquidity pools
+│   │   │   ├── ZeaGovernance.sol       # DAO governance
+│   │   │   ├── ZeaTreasury.sol         # Treasury management
+│   │   │   ├── ZeaTradFiBridge.sol     # TradFi integration
+│   │   │   ├── ZeaSlotMachine.sol      # Slot game
+│   │   │   ├── ZeaPoker.sol            # Poker game
+│   │   │   ├── ZeaRoulette.sol         # Roulette game
+│   │   │   ├── ZeaSportsBetting.sol    # Sports betting
+│   │   │   └── IWorldIDVerifier.sol    # World ID interface
 │   │   ├── scripts/
 │   │   │   └── deploy.ts
 │   │   └── hardhat.config.ts
@@ -146,6 +181,38 @@ zeazdev-omega/
 - **Real Card**: Apply for physical card
 - **Thai Bank Integration**: Deposit/withdraw THB
 - **PromptPay Top-Up**: Instant QR code payments for crypto top-up
+
+### 🌉 Cross-Chain & Bridge
+- **Multi-Chain Bridge**: Seamless token transfers between Optimism, Polygon, Arbitrum, and Base
+- **Liquidity Pools**: Earn fees by providing bridge liquidity (15%+ APR)
+- **TradFi Bridge**: Connect traditional finance with blockchain
+
+### 🎮 GameFi Expansion
+- **Slot Machine**: Unity-powered crypto slots with $DING rewards
+- **Poker**: Multiplayer poker with crypto betting
+- **Roulette**: Classic casino game with blockchain integration
+- **Sports Betting**: Decentralized sports betting platform
+
+### 🏛️ Governance & DAO
+- **On-Chain Governance**: Participate in protocol decisions with $ZEA
+- **Proposal System**: Create and vote on platform improvements
+- **Treasury Management**: Community-controlled treasury
+
+### 👥 Social Features
+- **Social Profiles**: Connect with other users
+- **Activity Feed**: Share and discover platform activities
+- **Achievements**: Earn badges and rewards for platform engagement
+
+### 📊 Analytics & Insights
+- **Portfolio Tracking**: Monitor your assets across all chains
+- **Performance Metrics**: Track your earnings and ROI
+- **Market Analytics**: Real-time crypto market data
+
+### 🏢 Enterprise Solutions
+- **White-Label Platform**: Deploy branded versions of ZeaZDev
+- **API Marketplace**: Access premium APIs and services
+- **SDK Support**: JavaScript, Python, and Go SDKs
+- **Plugin Ecosystem**: Extend functionality with community plugins
 
 ### 🔐 Security
 - **ZKP Verification**: World ID nullifier hash tracking
@@ -273,12 +340,20 @@ Powered by react-i18next with dynamic language switching.
 
 ## 📚 Documentation
 
+### Core Documentation
 - [Architecture Deep Dive](./ARCHITECTURE.md)
 - [Tokenomics](./TOKENOMICS.md)
 - [Roadmap](./ROADMAP.md)
 - [Contributing Guidelines](./CONTRIBUTING.md)
 - [GitHub Setup Guide](./GITHUB-SETUP.md)
 - [OS Requirements](./INSTALLER_OS_REQUIREMENTS.md)
+
+### Feature-Specific Guides
+- [API Documentation](./API_DOCUMENTATION.md)
+- [Cross-Chain Bridge Integration](./BRIDGE_INTEGRATION.md)
+- [Enterprise Features](./ENTERPRISE_FEATURES.md)
+- [GameFi Integration](./GAMEFI_INTEGRATION.md)
+- [PromptPay Integration](./PROMPTPAY_INTEGRATION.md)
 
 ## 🔗 Links
 
