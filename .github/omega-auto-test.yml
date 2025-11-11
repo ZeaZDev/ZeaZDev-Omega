@@ -1,0 +1,60 @@
+name: Ω.7 AI Auto-Test Generator
+on:
+  push:
+    branches: [main, dev, feature/**]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  ai-auto-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Detect dominant language
+        id: detect
+        run: |
+          if ls *.py >/dev/null 2>&1; then echo "lang=python" >> $GITHUB_OUTPUT
+          elif ls package.json >/dev/null 2>&1; then echo "lang=javascript" >> $GITHUB_OUTPUT
+          elif ls *.go >/dev/null 2>&1; then echo "lang=go" >> $GITHUB_OUTPUT
+          else echo "lang=unknown" >> $GITHUB_OUTPUT
+      - name: Collect core files
+        run: |
+          mkdir -p source-snippets
+          find . -type f -name "*.py" -o -name "*.js" -o -name "*.ts" | head -n 10 | xargs -I{} cp {} source-snippets/ || true
+          tar czf source-snippets.tar.gz source-snippets
+      - name: Send source to GPT-5 for test generation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          TEXT=$(base64 source-snippets.tar.gz | head -c 50000)
+          curl https://api.openai.com/v1/chat/completions \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "gpt-5",
+        _price_tracking_system     "messages": [
+                {"role":"system","content":"You are an expert test engineer. Read the project code and create minimal meaningful unit tests."},
+                {"role":"user","content":"Base64 archive: '"$TEXT"'"}
+              ]
+            }' | jq -r '.choices[0].message.content' > ai_tests.txt
+      - name: Save generated tests
+        run: |
+          mkdir -p ai_generated_tests
+          case "${{ steps.detect.outputs.lang }}" in
+            python) echo "$(<ai_tests.txt)" > ai_generated_tests/test_auto.py ;;
+            javascript|typescript) echo "$(<ai_tests.txt)" > ai_generated_tests/auto.test.tsx ;;
+            go) echo "$(<ai_tests.txt)" > ai_generated_tests/auto_test.go ;;
+            *) echo "$(<ai_tests.txt)" > ai_generated_tests/auto_test.txt ;;
+          esac
+      - name: Commit and PR the AI tests
+        run: |
+          git config user.name "omega-bot"
+          git config user.email "omega-bot@zeazdev.io"
+          BRANCH="test/ai-auto-$(date +%s)"
+          git checkout -b "$BRANCH"
+          git add ai_generated_tests/
+          git commit -m "🧪 test: add AI-generated tests (Ω.7)"
+          git push -u origin "$BRANCH"
+          gh pr create --title "🧪 AI Auto-Generated Tests (Ω.7)" --body "Automatically generated tests using GPT-5 based on latest project source."

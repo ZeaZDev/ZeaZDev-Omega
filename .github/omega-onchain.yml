@@ -1,0 +1,16 @@
+name: Ω.3 On-Chain Deployment Record
+on:
+  workflow_run:
+    workflows: ["Auto Deploy ($Project)"]
+    types: [completed]
+jobs:
+  onchain-log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Commit Audit Hash to Blockchain
+        run: |
+          HASH=$(git rev-parse HEAD)
+          echo "🪙 Recording commit $HASH on chain..."
+          curl -X POST "https://api.blockchain.example/record" \
+            -H "Content-Type: application/json" \
+            -d '{"project":"'"${Project}"'","commit":"'"$HASH"'","network":"Ethereum-Goerli"}'

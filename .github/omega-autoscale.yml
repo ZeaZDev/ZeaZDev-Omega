@@ -1,0 +1,21 @@
+name: Ω.2 Predictive Scaling
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+jobs:
+  autoscale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Analyze metrics and scale
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            CPU=$(docker stats --no-stream --format "{{.CPUPerc}}" | sed 's/%//g' | awk '{sum+=$1} END {print sum/NR}')
+            if (( $(echo "$CPU > 75" | bc -l) )); then
+              docker compose up -d --scale backend=3 --scale frontend=2
+            elif (( $(echo "$CPU < 25" | bc -l) )); then
+              docker compose up -d --scale backend=1 --scale frontend=1
+            fi

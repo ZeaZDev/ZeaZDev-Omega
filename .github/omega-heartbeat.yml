@@ -1,0 +1,36 @@
+name: Ω.1 Heartbeat Monitor
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+
+# ⬇️ [แก้ไข] เพิ่มตัวแปร Domain และ Telegram
+env:
+  DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check API Health
+        run: |
+          URL="https://staging.${Project,,}.$DOMAIN_NAME/health"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Heartbeat failed ($STATUS) → Trigger redeploy"
+            gh workflow run auto-deploy.yml
+            MSG="⚠️ ${Project} heartbeat failed — system auto-redeployed"
+            
+            # แจ้งเตือนผ่าน Webhook (ของเดิม)
+            curl -X POST -H "Content-Type: application/json" \
+              -d '{"content": "'"${MSG}"'"}' ${{ secrets.DEPLOY_WEBHOOK_URL }}
+
+            # ⬇️ [เพิ่มใหม่] แจ้งเตือนผ่าน Telegram
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              -d text="${MSG}"
+
+          else
+            echo "✅ $Project heartbeat healthy ($STATUS)"
+          fi

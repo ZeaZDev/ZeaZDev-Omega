@@ -1,0 +1,18 @@
+name: Ω.4 Metrics Export
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+
+env:
+  DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push Workflow Metrics
+        run: |
+          STATUS=$(gh run list --limit 1 --json conclusion --jq '.[0].conclusion')
+          curl -X POST "https://metrics.$DOMAIN_NAME/api/collect" \
+            -H "Content-Type: application/json" \
+            -d '{"project":"'"${Project}"'","status":"'"$STATUS"'","timestamp":"'"$(date -u +%FT%T)"'"}'
