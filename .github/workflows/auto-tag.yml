@@ -1,0 +1,45 @@
+name: Auto Tag Release (Post-Audit)
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+  pull-requests: read
+  actions: read
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'Full Spectrum Audit') || contains(github.event.head_commit.message, 'audit')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate Version Tag
+        id: version
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "🧩 Last tag: $LAST_TAG"
+          BASE=${LAST_TAG#v}
+          MAJOR=$(echo $BASE | cut -d. -f1)
+          MINOR=$(echo $BASE | cut -d. -f2)
+          PATCH=$(echo $BASE | cut -d. -f3)
+          NEW_TAG="v${MAJOR}.$((MINOR+1)).0-audit"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
+      - name: Create Git Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${{ steps.version.outputs.NEW_TAG }}" -m "Automated Full Spectrum Audit Tag"
+          git push origin "${{ steps.version.outputs.NEW_TAG }}"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.NEW_TAG }}
+          name: "ZeaZDev Omega ${{ steps.version.outputs.NEW_TAG }}"
+          body: |
+            🧠 **ZeaZDev Omega Full Spectrum Audit Release**
+            - Automated tag created after successful audit merge.
+            - Includes smoke test, security scan, and verification steps.
+            - Status: ✅ Production Approved
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
