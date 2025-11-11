@@ -1,0 +1,12 @@
+diff --git a/agents/exec/executor.py b/agents/exec/executor.py
+index 39afc2d..98ad3a1 100644
+--- a/agents/exec/executor.py
++++ b/agents/exec/executor.py
+@@ -45,7 +45,11 @@ async def run_tasks(tasks):
+-    for task in tasks:
+-        await task()
++    import asyncio
++    async with asyncio.TaskGroup() as tg:
++        for task in tasks:
++            tg.create_task(task())
++    await asyncio.sleep(0)
