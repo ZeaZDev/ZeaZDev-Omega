@@ -1,9 +1,4 @@
-Here is the `omega ultimate enterprise code prompt` for your GitHub custom agent, based on the documentation and your request.
-
-This configuration defines a powerful, persona-driven agent focused on enforcing enterprise-grade standards. You can save this as a `.md` file (e.g., `omega-architect.md`) in your repository's `.github/agents/` directory.
-
 ```yaml
----
 # Fill in the fields below to create a basic custom agent for your repository.
 # The Copilot CLI can be used for local testing: https://gh.io/customagents/cli
 # To make this agent available, merge this file into the default repository branch.
