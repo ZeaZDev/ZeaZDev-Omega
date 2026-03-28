@@ -36,7 +36,7 @@ contract ZeaZRewards is Ownable, ReentrancyGuard {
     uint256 public dailyCheckInReward = 100 * 10**18; // 100 ZEA
     uint256 public airdropReward = 1000 * 10**18; // 1000 ZEA
     uint256 public referralReward = 500 * 10**18; // 500 ZEA
-    uint256 public dingBonusReward = 10000 * 10**18; // 10000 DING
+    uint256 public zeazBonusReward = 10000 * 10**18; // 10000 ZEAZ
 
     // Nullifier tracking to prevent double-claims
     mapping(uint256 => bool) public usedNullifiers;
@@ -89,7 +89,7 @@ contract ZeaZRewards is Ownable, ReentrancyGuard {
 
         // Transfer rewards
         zeaToken.transfer(msg.sender, dailyCheckInReward);
-        dingToken.mintReward(msg.sender, dingBonusReward);
+        dingToken.mintReward(msg.sender, zeazBonusReward);
 
         emit DailyCheckInClaimed(msg.sender, nullifierHash, dailyCheckInReward);
     }
@@ -112,7 +112,7 @@ contract ZeaZRewards is Ownable, ReentrancyGuard {
         hasClaimedAirdrop[msg.sender] = true;
 
         zeaToken.transfer(msg.sender, airdropReward);
-        dingToken.mintReward(msg.sender, dingBonusReward * 2);
+        dingToken.mintReward(msg.sender, zeazBonusReward * 2);
 
         emit AirdropClaimed(msg.sender, nullifierHash, airdropReward);
     }
@@ -176,17 +176,17 @@ contract ZeaZRewards is Ownable, ReentrancyGuard {
         uint256 _dailyCheckIn,
         uint256 _airdrop,
         uint256 _referral,
-        uint256 _dingBonus
+        uint256 _zeazBonus
     ) external onlyOwner {
         dailyCheckInReward = _dailyCheckIn;
         airdropReward = _airdrop;
         referralReward = _referral;
-        dingBonusReward = _dingBonus;
+        zeazBonusReward = _zeazBonus;
 
         emit RewardAmountUpdated("daily", _dailyCheckIn);
         emit RewardAmountUpdated("airdrop", _airdrop);
         emit RewardAmountUpdated("referral", _referral);
-        emit RewardAmountUpdated("dingBonus", _dingBonus);
+        emit RewardAmountUpdated("zeazBonus", _zeazBonus);
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * @Project: ZeaZDev FiGaTect Super-App
- * @Module: Smart-Contracts-DING
+ * @Module: Smart-Contracts-ZEAZ
  * @File: DingToken.sol
  * @Author: ZeaZDev Enterprises (OMEGA AI)
  * @Date: 2025-11-09
@@ -21,7 +21,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /**
  * @title DingToken
  * @dev Production-grade ERC20 reward token for ZeaZDev GameFi ecosystem
- * $DING - In-game reward token for Slots/Rewards, pausable and burnable
+ * $ZEAZ - In-game reward token for Slots/Rewards, pausable and burnable
  */
 contract DingToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable {
     uint256 public constant MAX_SUPPLY = 100_000_000_000 * 10**18; // 100 Billion max
@@ -41,7 +41,7 @@ contract DingToken is ERC20, ERC20Burnable, ERC20Pausable, Ownable {
     }
 
     constructor(address initialOwner)
-        ERC20("DingToken", "DING")
+        ERC20("ZEAZToken", "ZEAZ")
         Ownable(initialOwner)
     {}
 

@@ -33,7 +33,7 @@ interface BridgeQuote {
 
 export default function BridgeScreen() {
   const [amount, setAmount] = useState('');
-  const [selectedToken, setSelectedToken] = useState<'ZEA' | 'DING'>('ZEA');
+  const [selectedToken, setSelectedToken] = useState<'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB'>('ZEA');
   const [sourceChain, setSourceChain] = useState(10); // Optimism
   const [targetChain, setTargetChain] = useState(137); // Polygon
   const [loading, setLoading] = useState(false);
@@ -143,11 +143,28 @@ export default function BridgeScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.tokenButton, selectedToken === 'DING' && styles.tokenButtonActive]}
-                onPress={() => setSelectedToken('DING')}
+                style={[styles.tokenButton, selectedToken === 'ZEAZ' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZEAZ')}
               >
-                <Text style={[styles.tokenButtonText, selectedToken === 'DING' && styles.tokenButtonTextActive]}>
-                  DING
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZEAZ' && styles.tokenButtonTextActive]}>
+                  ZEAZ
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tokenButton, selectedToken === 'ZUSD' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZUSD')}
+              >
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZUSD' && styles.tokenButtonTextActive]}>
+                  ZUSD
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.tokenButton, selectedToken === 'ZTHB' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZTHB')}
+              >
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZTHB' && styles.tokenButtonTextActive]}>
+                  ZTHB
                 </Text>
               </TouchableOpacity>
             </View>
@@ -318,11 +335,28 @@ export default function BridgeScreen() {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.tokenButton, selectedToken === 'DING' && styles.tokenButtonActive]}
-                onPress={() => setSelectedToken('DING')}
+                style={[styles.tokenButton, selectedToken === 'ZEAZ' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZEAZ')}
               >
-                <Text style={[styles.tokenButtonText, selectedToken === 'DING' && styles.tokenButtonTextActive]}>
-                  DING
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZEAZ' && styles.tokenButtonTextActive]}>
+                  ZEAZ
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tokenButton, selectedToken === 'ZUSD' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZUSD')}
+              >
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZUSD' && styles.tokenButtonTextActive]}>
+                  ZUSD
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.tokenButton, selectedToken === 'ZTHB' && styles.tokenButtonActive]}
+                onPress={() => setSelectedToken('ZTHB')}
+              >
+                <Text style={[styles.tokenButtonText, selectedToken === 'ZTHB' && styles.tokenButtonTextActive]}>
+                  ZTHB
                 </Text>
               </TouchableOpacity>
             </View>
@@ -352,7 +386,7 @@ export default function BridgeScreen() {
           {/* Info Card */}
           <View style={styles.infoCard}>
             <Text style={styles.infoTitle}>💡 How it works</Text>
-            <Text style={styles.infoText}>• Provide ZEA or DING to liquidity pools</Text>
+            <Text style={styles.infoText}>• Provide ZEA, ZEAZ, ZUSD, or ZTHB to liquidity pools</Text>
             <Text style={styles.infoText}>• Earn 0.05% fee on all bridge transactions</Text>
             <Text style={styles.infoText}>• Remove liquidity anytime (no lock period)</Text>
             <Text style={styles.infoText}>• APR adjusts based on bridge volume</Text>

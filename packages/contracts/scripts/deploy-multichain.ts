@@ -25,15 +25,15 @@ async function main() {
 
   // Get existing token addresses (should be deployed on each chain)
   const zeaTokenAddress = process.env.ZEA_TOKEN_ADDRESS || ethers.ZeroAddress;
-  const dingTokenAddress = process.env.DING_TOKEN_ADDRESS || ethers.ZeroAddress;
+  const dingTokenAddress = process.env.ZEAZ_TOKEN_ADDRESS || process.env.DING_TOKEN_ADDRESS || ethers.ZeroAddress;
 
   if (zeaTokenAddress === ethers.ZeroAddress || dingTokenAddress === ethers.ZeroAddress) {
     console.log("⚠️  WARNING: Token addresses not set. Deploy tokens first!");
-    console.log("Set ZEA_TOKEN_ADDRESS and DING_TOKEN_ADDRESS in .env");
+    console.log("Set ZEA_TOKEN_ADDRESS and ZEAZ_TOKEN_ADDRESS (or legacy DING_TOKEN_ADDRESS) in .env");
   } else {
     console.log("Using existing tokens:");
     console.log("  ZEA Token:", zeaTokenAddress);
-    console.log("  DING Token:", dingTokenAddress);
+    console.log("  ZEAZ Token:", dingTokenAddress);
     console.log("");
   }
 
@@ -45,14 +45,14 @@ async function main() {
   const bridgeAddress = await bridge.getAddress();
   console.log("✅ ZeaBridge deployed to:", bridgeAddress);
 
-  // Deploy ZeaLiquidityPool (ZEA/DING)
-  console.log("\n💧 2. Deploying ZEA/DING Liquidity Pool...");
+  // Deploy ZeaLiquidityPool (ZEA/ZEAZ/ZUSD/ZTHB)
+  console.log("\n💧 2. Deploying ZEA/ZEAZ/ZUSD/ZTHB Liquidity Pool...");
   const ZeaLiquidityPool = await ethers.getContractFactory("ZeaLiquidityPool");
   const pool = await ZeaLiquidityPool.deploy(
     zeaTokenAddress,
     dingTokenAddress,
-    "ZEA-DING LP",
-    "ZEA-DING"
+    "ZEA-ZEAZ LP",
+    "ZEA-ZEAZ"
   );
   await pool.waitForDeployment();
   const poolAddress = await pool.getAddress();
@@ -86,7 +86,7 @@ async function main() {
   console.log("  ZeaRoulette:", rouletteAddress);
   console.log("\nToken Addresses:");
   console.log("  ZEA Token:", zeaTokenAddress);
-  console.log("  DING Token:", dingTokenAddress);
+  console.log("  ZEAZ Token:", dingTokenAddress);
   console.log("========================================");
 
   // Save deployment info to file

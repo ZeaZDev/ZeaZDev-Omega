@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title ZeaRoulette
- * @notice Decentralized roulette game with ZEA/DING betting
+ * @notice Decentralized roulette game with ZEA/ZEAZ/ZUSD/ZTHB betting
  * @dev European roulette (0-36)
  */
 contract ZeaRoulette is Ownable, ReentrancyGuard, Pausable {

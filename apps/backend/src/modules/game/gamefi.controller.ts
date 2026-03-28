@@ -27,7 +27,7 @@ export class GameFiController {
     body: {
       userId: string;
       betAmount: string;
-      tokenUsed: 'ZEA' | 'DING';
+      tokenUsed: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
     },
   ) {
     return this.gameFiService.spinSlotMachine(

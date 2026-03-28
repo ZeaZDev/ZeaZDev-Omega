@@ -29,7 +29,7 @@ public class Web3Bridge : MonoBehaviour
     /// Called from React Native to start a slot game
     /// </summary>
     /// <param name="betAmountStr">Bet amount in wei</param>
-    /// <param name="token">Token type (ZEA or DING)</param>
+    /// <param name="token">Token type (ZEA, ZEAZ, ZUSD, or ZTHB)</param>
     public void PlaySlots(string betAmountStr, string token)
     {
         try
@@ -91,7 +91,7 @@ public class Web3Bridge : MonoBehaviour
     public void GetBalance()
     {
         // In production, query blockchain for balance
-        string balanceJson = "{\"ZEA\":\"1000\",\"DING\":\"50000\"}";
+        string balanceJson = "{\"ZEA\":\"1000\",\"ZEAZ\":\"50000\",\"ZUSD\":\"2500\",\"ZTHB\":\"85000\"}";
         
         #if UNITY_WEBGL && !UNITY_EDITOR
             SendMessageToRN(balanceJson);

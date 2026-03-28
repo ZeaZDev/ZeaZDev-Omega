@@ -36,7 +36,7 @@ contract ZeaSlotMachine is ERC721, Ownable, ReentrancyGuard, Pausable {
     struct GameSession {
         address player;
         uint256 betAmount;
-        address tokenUsed; // ZEA or DING
+        address tokenUsed; // ZEA, ZEAZ, ZUSD, or ZTHB
         uint8[3] result;
         uint256 winAmount;
         bool completed;

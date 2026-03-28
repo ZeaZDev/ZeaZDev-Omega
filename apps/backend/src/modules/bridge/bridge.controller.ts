@@ -13,6 +13,8 @@
 import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { BridgeService } from './bridge.service';
 
+type TokenSymbol = 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
+
 @Controller('bridge')
 export class BridgeController {
   constructor(private readonly bridgeService: BridgeService) {}
@@ -39,7 +41,7 @@ export class BridgeController {
   @Post('initiate')
   async initiateBridge(@Body() body: {
     userId: string;
-    token: string;
+    token: TokenSymbol;
     amount: string;
     sourceChain: number;
     targetChain: number;
@@ -108,7 +110,7 @@ export class BridgeController {
   async getLiquidityInfo(
     @Param('chainId') chainId: string,
     @Query('userId') userId: string,
-    @Query('token') token: string,
+    @Query('token') token: TokenSymbol,
   ) {
     return this.bridgeService.getLiquidityInfo(
       userId,
@@ -123,7 +125,7 @@ export class BridgeController {
   @Post('liquidity/add')
   async addLiquidity(@Body() body: {
     userId: string;
-    token: string;
+    token: TokenSymbol;
     amount: string;
     chainId: number;
   }) {
@@ -141,7 +143,7 @@ export class BridgeController {
   @Post('liquidity/remove')
   async removeLiquidity(@Body() body: {
     userId: string;
-    token: string;
+    token: TokenSymbol;
     shares: string;
     chainId: number;
   }) {

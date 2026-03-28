@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator } from 'react-native';
 
 type GameType = 'menu' | 'slots' | 'poker' | 'roulette' | 'sports';
+type TokenSymbol = 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
 
 interface GameStats {
   totalGames: number;
@@ -27,6 +28,7 @@ export default function GameScreen() {
   const [selectedGame, setSelectedGame] = useState<GameType>('menu');
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState<GameStats | null>(null);
+  const [selectedToken, setSelectedToken] = useState<TokenSymbol>('ZEA');
 
   // Slots state
   const [slotBet, setSlotBet] = useState('10');
@@ -89,7 +91,7 @@ export default function GameScreen() {
         body: JSON.stringify({
           userId: 'user_123',
           betAmount: ethers.parseEther(slotBet).toString(),
-          tokenUsed: 'ZEA',
+          tokenUsed: selectedToken,
           txHash: `0x${Date.now()}`,
         }),
       });
@@ -141,7 +143,7 @@ export default function GameScreen() {
           betAmount: ethers.parseEther(rouletteBet).toString(),
           betType: rouletteType,
           betValue: rouletteValue,
-          token: 'ZEA',
+          token: selectedToken,
         }),
       });
       const data = await response.json();
@@ -173,11 +175,11 @@ export default function GameScreen() {
           eventId: selectedEvent.id,
           prediction: sportsPrediction,
           betAmount: ethers.parseEther(sportsBet).toString(),
-          token: 'ZEA',
+          token: selectedToken,
         }),
       });
       const data = await response.json();
-      Alert.alert('Bet Placed!', `Potential payout: ${data.potentialPayout} ZEA`);
+      Alert.alert('Bet Placed!', `Potential payout: ${data.potentialPayout} ${selectedToken}`);
       loadStats();
     } catch (error) {
       Alert.alert('Error', 'Failed to place bet');
@@ -190,6 +192,21 @@ export default function GameScreen() {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🎮 Game Center</Text>
       <Text style={styles.subtitle}>Choose your game</Text>
+
+      <View style={styles.tokenSelector}>
+        {(['ZEA', 'ZEAZ', 'ZUSD', 'ZTHB'] as TokenSymbol[]).map((token) => (
+          <TouchableOpacity
+            key={token}
+            style={[styles.tokenButton, selectedToken === token && styles.tokenButtonActive]}
+            onPress={() => setSelectedToken(token)}
+          >
+            <Text style={[styles.tokenButtonText, selectedToken === token && styles.tokenButtonTextActive]}>
+              {token}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <Text style={styles.tokenHint}>Current token: {selectedToken}</Text>
 
       {/* Stats Card */}
       {stats && (
@@ -267,7 +284,7 @@ export default function GameScreen() {
           style={styles.input}
           value={slotBet}
           onChangeText={setSlotBet}
-          placeholder="Bet amount (ZEA)"
+          placeholder={`Bet amount (${selectedToken})`}
           placeholderTextColor="#666"
           keyboardType="numeric"
         />
@@ -310,7 +327,7 @@ export default function GameScreen() {
           style={styles.input}
           value={pokerBet}
           onChangeText={setPokerBet}
-          placeholder="Bet amount (ZEA)"
+          placeholder={`Bet amount (${selectedToken})`}
           placeholderTextColor="#666"
           keyboardType="numeric"
         />
@@ -389,7 +406,7 @@ export default function GameScreen() {
           style={styles.input}
           value={rouletteBet}
           onChangeText={setRouletteBet}
-          placeholder="Bet amount (ZEA)"
+          placeholder={`Bet amount (${selectedToken})`}
           placeholderTextColor="#666"
           keyboardType="numeric"
         />
@@ -457,7 +474,7 @@ export default function GameScreen() {
             style={styles.input}
             value={sportsBet}
             onChangeText={setSportsBet}
-            placeholder="Bet amount (ZEA)"
+            placeholder={`Bet amount (${selectedToken})`}
             placeholderTextColor="#666"
             keyboardType="numeric"
           />
@@ -492,6 +509,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a', padding: 20 },
   title: { fontSize: 32, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#888', marginBottom: 24 },
+  tokenSelector: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 },
+  tokenButton: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 10, backgroundColor: '#1f1f1f', marginRight: 8, marginBottom: 8 },
+  tokenButtonActive: { backgroundColor: '#00ff88' },
+  tokenButtonText: { color: '#fff', fontWeight: '600' },
+  tokenButtonTextActive: { color: '#0a0a0a' },
+  tokenHint: { color: '#888', marginBottom: 20 },
   backButton: { marginBottom: 16 },
   backText: { fontSize: 16, color: '#00ff88', fontWeight: '600' },
   statsCard: { backgroundColor: '#1a1a1a', borderRadius: 12, padding: 20, marginBottom: 24 },

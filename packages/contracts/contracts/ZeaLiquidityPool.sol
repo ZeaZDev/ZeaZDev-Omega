@@ -8,12 +8,12 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /**
  * @title ZeaLiquidityPool
- * @notice Multi-chain liquidity pool for ZEA/DING trading
+ * @notice Multi-chain liquidity pool for ZEA/ZEAZ/ZUSD/ZTHB trading
  * @dev Automated Market Maker (AMM) for cross-chain liquidity
  */
 contract ZeaLiquidityPool is ERC20, Ownable, ReentrancyGuard {
     IERC20 public tokenA; // ZEA
-    IERC20 public tokenB; // DING or other token
+    IERC20 public tokenB; // ZEAZ/ZUSD/ZTHB or other token
 
     uint256 public reserveA;
     uint256 public reserveB;

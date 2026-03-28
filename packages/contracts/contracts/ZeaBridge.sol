@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title ZeaBridge
- * @notice Cross-chain bridge for ZEA and DING tokens
+ * @notice Cross-chain bridge for ZEA, ZEAZ, ZUSD, and ZTHB tokens
  * @dev Supports Polygon, Arbitrum, and Base networks
  */
 contract ZeaBridge is Ownable, ReentrancyGuard, Pausable {
@@ -69,7 +69,7 @@ contract ZeaBridge is Ownable, ReentrancyGuard, Pausable {
 
     /**
      * @notice Initiate a bridge transaction to another chain
-     * @param token Address of token to bridge (ZEA or DING)
+     * @param token Address of token to bridge (ZEA, ZEAZ, ZUSD, or ZTHB)
      * @param amount Amount to bridge
      * @param targetChain Target chain ID
      */

@@ -123,7 +123,7 @@ contract ZeaLiquidityBridge is Ownable, ReentrancyGuard, Pausable {
 
     /**
      * @notice Add liquidity to the bridge pool
-     * @param token Address of token (ZEA or DING)
+     * @param token Address of token (ZEA, ZEAZ, ZUSD, or ZTHB)
      * @param amount Amount of tokens to add
      */
     function addLiquidity(address token, uint256 amount)
@@ -168,7 +168,7 @@ contract ZeaLiquidityBridge is Ownable, ReentrancyGuard, Pausable {
 
     /**
      * @notice Remove liquidity from the bridge pool
-     * @param token Address of token (ZEA or DING)
+     * @param token Address of token (ZEA, ZEAZ, ZUSD, or ZTHB)
      * @param shares Amount of LP shares to redeem
      */
     function removeLiquidity(address token, uint256 shares)
@@ -208,7 +208,7 @@ contract ZeaLiquidityBridge is Ownable, ReentrancyGuard, Pausable {
 
     /**
      * @notice Initiate a bridge transaction to another chain
-     * @param token Address of token to bridge (ZEA or DING)
+     * @param token Address of token to bridge (ZEA, ZEAZ, ZUSD, or ZTHB)
      * @param amount Amount to bridge
      * @param targetChain Target chain ID
      */
