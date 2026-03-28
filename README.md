@@ -10,6 +10,11 @@ ZeaZDev is an **OMEGA-TIER production-grade** Multi-Platform FiGaTect Super-App 
 
 Built as a **MiniApp for World App**, ZeaZDev uses **World ID Zero-Knowledge Proof (ZKP)** as the foundational identity verification layer for all high-value functions.
 
+
+## 📘 Full Bilingual Manual (EN/TH)
+
+- See `docs/FULL_MANUAL_BLUEPRINT_TH_EN.md` for a full-repo manual, blueprint, and roadmap in English and Thai.
+
 ## 🏗️ Architecture
 
 ```mermaid
