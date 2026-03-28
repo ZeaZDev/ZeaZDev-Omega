@@ -20,7 +20,10 @@
     "db:migrate": "cd apps/backend && pnpm prisma migrate dev",
     "db:generate": "cd apps/backend && pnpm prisma generate",
     "contracts:compile": "cd packages/contracts && pnpm hardhat compile",
-    "contracts:deploy": "cd packages/contracts && pnpm hardhat run scripts/deploy.ts"
+    "contracts:deploy": "cd packages/contracts && pnpm hardhat run scripts/deploy.ts",
+    "compliance:check": "bash scripts/validate-compliance.sh",
+    "sbom:generate": "bash scripts/generate-sbom.sh",
+    "reproducible:build": "bash scripts/reproducible-build.sh"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

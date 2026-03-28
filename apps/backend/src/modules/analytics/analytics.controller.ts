@@ -48,6 +48,11 @@ export class AnalyticsController {
     return this.analyticsService.generateRecommendations(userId);
   }
 
+  @Get('compliance/snapshot')
+  getComplianceSnapshot() {
+    return this.analyticsService.getComplianceSnapshot();
+  }
+
   @Post('prediction')
   async createPrediction(
     @Body() body: { userId: string; predictionType: string; prediction: string; confidence: number },
