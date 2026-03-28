@@ -1,411 +1,53 @@
-# ZeaZDev Architecture
+# ZeaZDev-Omega Architecture Blueprint (2026)
 
-## 🏛️ System Architecture
+## 1) Architecture Principles
 
-ZeaZDev is built on a **microservices-inspired monorepo architecture** with clear separation of concerns across multiple layers.
+- **Deterministic**: repeatable builds and scripted verification
+- **Modular**: bounded contexts for auth, DeFi, GameFi, FinTech, analytics
+- **Secure-by-default**: strict input validation, secrets hygiene, principle of least privilege
+- **Compliance-ready**: metadata extraction + audit artifacts by default
+- **Cloud-native**: deployable through CI/CD pipelines and container orchestration
 
----
+## 2) System Layers
 
-## 📐 High-Level Architecture
+1. **Experience Layer**
+   - React Native/Expo client app
+2. **Application Layer**
+   - NestJS modular backend APIs
+3. **Domain Layer**
+   - DeFi/GameFi/FinTech orchestration services
+4. **Data & Chain Layer**
+   - PostgreSQL, Redis, and smart contracts
+5. **Operations Layer**
+   - CI/CD workflows, compliance scripts, SBOM, audit bundles
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CLIENT LAYER                              │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   iOS App    │  │ Android App  │  │   Web App    │          │
-│  │ (React Native)  │ (React Native) │(React Native Web)│       │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-└─────────────────────────────────────────────────────────────────┘
-                            ↓ REST API
-┌─────────────────────────────────────────────────────────────────┐
-│                      API GATEWAY LAYER                           │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │           NestJS Backend (Port 3000)                     │   │
-│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐       │   │
-│  │  │  Auth   │ │  DeFi   │ │ Rewards │ │  Game   │       │   │
-│  │  │ Module  │ │ Module  │ │ Module  │ │ Module  │       │   │
-│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘       │   │
-│  │  ┌─────────┐                                             │   │
-│  │  │FinTech  │                                             │   │
-│  │  │ Module  │                                             │   │
-│  │  └─────────┘                                             │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-           ↓                    ↓                    ↓
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│  BLOCKCHAIN      │  │   DATA LAYER     │  │  EXTERNAL APIS   │
-│  ┌────────────┐  │  │  ┌────────────┐  │  │  ┌────────────┐  │
-│  │ ZEA Token  │  │  │  │ PostgreSQL │  │  │  │  World ID  │  │
-│  │ DING Token │  │  │  │   (Prisma) │  │  │  │   Oracle   │  │
-│  │  Rewards   │  │  │  └────────────┘  │  │  └────────────┘  │
-│  │   Stake    │  │  │  ┌────────────┐  │  │  ┌────────────┐  │
-│  │  Verifier  │  │  │  │   Redis    │  │  │  │  Uniswap   │  │
-│  └────────────┘  │  │  │   Cache    │  │  │  │    V3      │  │
-│  (Optimism L2)   │  │  └────────────┘  │  │  └────────────┘  │
-└──────────────────┘  └──────────────────┘  │  ┌────────────┐  │
-                                             │  │Thai Banks  │  │
-                                             │  │ Marqeta    │  │
-                                             │  └────────────┘  │
-                                             └──────────────────┘
+## 3) 2026 Compliance & Audit Flow
+
+```text
+Developer change
+  -> lint/test/build
+  -> compliance script
+  -> SBOM generation
+  -> reproducible artifact hash
+  -> audit metadata report
+  -> release gate decision
 ```
 
----
+## 4) Diagnostics Model
 
-## 🔐 World ID ZKP Flow
+- Runtime health and compliance snapshot exposed via backend endpoint
+- Script-based environment checks for secrets and risky files
+- Deterministic archive hashing for release reproducibility
 
-### Architecture Pattern: Zero-Knowledge Proof Verification
+## 5) Security Controls Baseline
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend
-    participant Backend
-    participant WorldID
-    participant Contract
+- Input validation at API boundary (Nest validation pipe)
+- Secret leakage prevention with deny-list scanning
+- Environment segregation policy (dev/staging/prod)
+- Auditability through structured metadata payloads
 
-    User->>Frontend: Request Reward Claim
-    Frontend->>WorldID: Initiate ZKP Generation
-    WorldID->>User: Show World ID Verification
-    User->>WorldID: Scan Orb/Approve
-    WorldID->>Frontend: Return Proof + Nullifier
-    Frontend->>Backend: POST /rewards/claim {proof, nullifier}
-    Backend->>Backend: Check Nullifier Not Used
-    Backend->>Contract: verifyProof(proof, nullifier)
-    Contract->>WorldID: Verify On-Chain
-    WorldID-->>Contract: Proof Valid
-    Contract-->>Backend: Verification Success
-    Backend->>Backend: Mark Nullifier as Used
-    Backend->>Contract: Transfer Rewards
-    Contract->>User: Receive ZEA/DING
-    Backend-->>Frontend: Claim Success
-    Frontend-->>User: Show Reward
-```
+## 6) Extensibility Notes
 
-### Key Components
-
-**1. Nullifier Hash Tracking**
-- Prevents double-claiming via unique identifiers
-- Stored both on-chain (contract) and off-chain (database)
-- Cannot be reverse-engineered to reveal identity
-
-**2. Signal Hash**
-- Binds proof to user's wallet address
-- Ensures proof can only be used by intended recipient
-- Calculated: `keccak256(walletAddress)`
-
-**3. External Nullifier**
-- Action-specific identifier (e.g., "daily-checkin", "airdrop")
-- Allows same user to prove once per action type
-- Calculated: `keccak256(ACTION_ID)`
-
-**4. Merkle Root**
-- Snapshot of verified humans in World ID system
-- Updated periodically by World ID protocol
-- Used to validate proof freshness
-
----
-
-## 💱 DeFi Integration Architecture
-
-### Uniswap V3 Swap Flow
-
-```
-User Input (Swap ZEA → ETH)
-    ↓
-Frontend: Get Quote
-    ↓
-Backend: /defi/swap/quote
-    ↓
-Uniswap Quoter Contract
-    ↓ (estimated amountOut)
-Backend Returns Quote
-    ↓
-User Confirms
-    ↓
-Frontend: Execute Swap (Web3)
-    ↓
-Uniswap Router Contract
-    ↓ (swap executed)
-Transaction Confirmed
-    ↓
-Backend: Record Transaction
-    ↓
-Database: Save Swap History
-```
-
-### Staking Architecture
-
-**Contract Layer**:
-```solidity
-ZeaZStake {
-    mapping(address => StakeInfo) stakes;
-    
-    function stake(amount) {
-        // Transfer ZEA from user
-        // Create/update stake record
-        // Start earning rewards
-    }
-    
-    function calculateRewards(user) {
-        // APY calculation based on time
-        // Returns pending rewards
-    }
-    
-    function claimRewards() {
-        // Calculate rewards
-        // Mint new ZEA as rewards
-        // Update lastClaimTime
-    }
-}
-```
-
-**Backend Layer**:
-- Tracks stake history in PostgreSQL
-- Provides aggregated statistics
-- Handles off-chain notifications
-
-**Frontend Layer**:
-- Real-time APY display
-- Auto-compound option (future)
-- Stake/unstake UI
-
----
-
-## 🏦 FinTech Bridge Design
-
-### Thai Bank Integration Proxy
-
-```
-User Request (Deposit 1000 THB)
-    ↓
-Frontend: Initiate Deposit
-    ↓
-Backend: /fintech/bank/thai/deposit
-    ↓
-Thai Bank Proxy Service
-    ↓
-┌─────────────────────────────────┐
-│  Thai Bank APIs (PromptPay)     │
-│  - SCB Easy API                 │
-│  - Kbank Open Banking           │
-│  - BBL Developer Portal         │
-└─────────────────────────────────┘
-    ↓
-Bank Confirms Transfer
-    ↓
-Backend: Create FintechTransaction
-    ↓
-Database: Save Transaction
-    ↓
-Backend: Mint Equivalent Crypto
-    ↓
-User Receives Crypto
-```
-
-### Card Issuance Flow
-
-```
-User: Apply for Card
-    ↓
-Frontend: /fintech/card/issue
-    ↓
-Backend: Verify World ID (ZKP)
-    ↓
-Backend: Check KYC Status
-    ↓
-Marqeta/Stripe API
-    ↓
-┌─────────────────────────────────┐
-│  Card Issuer                    │
-│  - Create User                  │
-│  - Issue Card                   │
-│  - Activate Card                │
-└─────────────────────────────────┘
-    ↓
-Backend: Save Card Details
-    ↓
-Database: FintechUser Record
-    ↓
-User: Receives Virtual Card Immediately
-User: Receives Physical Card in 7 days
-```
-
-**Security Measures**:
-1. **KYC Verification**: World ID + document upload
-2. **Spending Limits**: Configurable per user
-3. **Fraud Detection**: Real-time monitoring
-4. **3DS Authentication**: Required for online purchases
-5. **Card Freeze**: Instant freeze via app
-
----
-
-## 🎮 Game Architecture
-
-### Unity WebGL ↔ React Native Bridge
-
-```javascript
-// React Native Side
-const unityRef = useRef();
-
-const playSlots = async (betAmount) => {
-    // Send message to Unity
-    unityRef.current.postMessage({
-        action: 'PLAY_SLOTS',
-        betAmount: betAmount,
-        token: 'ZEA'
-    });
-};
-
-// Listen for Unity responses
-window.addEventListener('message', (event) => {
-    if (event.data.outcome === 'won') {
-        claimWinnings(event.data.winAmount);
-    }
-});
-```
-
-```csharp
-// Unity Side (Web3Bridge.cs)
-public void PlaySlots(string betAmount, string token) {
-    // Game logic
-    SpinSlots();
-    
-    // Send result back to RN
-    string result = JsonUtility.ToJson(new {
-        outcome = "won",
-        winAmount = "500000000000000000000"
-    });
-    
-    SendMessageToRN(result);
-}
-```
-
-### Game Session Flow
-
-```
-User: Click "Play Slots"
-    ↓
-Frontend: Check Balance
-    ↓
-Frontend: Approve Token Spend (MetaMask)
-    ↓
-Backend: POST /game/slots/play
-    ↓
-Database: Create GameSession
-    ↓
-Frontend: Load Unity WebGL
-    ↓
-Unity: Execute Game Logic
-    ↓
-Unity: Generate Result (provably fair)
-    ↓
-Unity: Send Result to Frontend
-    ↓
-Frontend: POST /game/slots/complete
-    ↓
-Backend: Update GameSession
-    ↓
-Backend: Transfer Winnings (if won)
-    ↓
-Frontend: Display Result
-```
-
----
-
-## 🗄️ Database Schema Architecture
-
-### Core Tables
-
-**Users Table**:
-```prisma
-model User {
-  id            String   @id @default(uuid())
-  worldIdHash   String?  @unique      // ZKP nullifier
-  walletAddress String   @unique
-  email         String?  @unique
-  
-  stakes        Stake[]
-  gameSessions  GameSession[]
-  fintechUser   FintechUser?
-  rewards       RewardClaim[]
-  referrals     Referral[]
-}
-```
-
-**Indexes for Performance**:
-- `walletAddress` (primary lookup)
-- `worldIdHash` (ZKP verification)
-- `createdAt` (time-series queries)
-
-### Caching Strategy (Redis)
-
-**Cache Keys**:
-- `user:${address}:balance` - Token balances (60s TTL)
-- `user:${address}:stakes` - Stake info (30s TTL)
-- `swap:quote:${hash}` - Swap quotes (10s TTL)
-- `game:session:${id}` - Active sessions (300s TTL)
-
-**Cache Invalidation**:
-- On-chain events trigger cache clear
-- Manual refresh on user action
-- Background sync every 30s
-
----
-
-## 🔒 Security Architecture
-
-### Multi-Layer Security
-
-**1. Smart Contract Layer**:
-- OpenZeppelin battle-tested contracts
-- Reentrancy guards on all state-changing functions
-- Pausable tokens for emergency stops
-- Access control via role-based permissions
-
-**2. API Layer**:
-- JWT authentication
-- Rate limiting (100 req/min per IP)
-- Input validation (class-validator)
-- SQL injection prevention (Prisma ORM)
-- CORS configuration
-
-**3. Infrastructure Layer**:
-- Docker container isolation
-- Network segmentation
-- Secrets management (env vars)
-- Database encryption at rest
-- TLS/SSL for all connections
-
-**4. Application Layer**:
-- World ID ZKP verification
-- Nullifier hash tracking
-- Transaction monitoring
-- Anomaly detection
-
----
-
-## 📈 Scalability
-
-### Horizontal Scaling
-
-**Backend**:
-- Stateless API servers
-- Load balancer (Nginx)
-- Redis session store
-- Auto-scaling based on CPU/Memory
-
-**Database**:
-- Read replicas for queries
-- Write master for mutations
-- Connection pooling (PgBouncer)
-- Sharding by user ID (future)
-
-**Blockchain**:
-- Optimism L2 (low gas, high throughput)
-- Batch transactions where possible
-- Event indexing for fast lookups
-
----
-
-**Last Updated**: 2025-11-08
-**Version**: 1.0.0
+- Add new modules under `apps/backend/src/modules/<domain>` with explicit contracts
+- Extend validation scripts in `scripts/` as standalone deterministic checks
+- Keep documentation synchronized in `docs/` for roadmap/manual/checklists

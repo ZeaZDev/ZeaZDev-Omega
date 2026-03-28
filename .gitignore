@@ -72,3 +72,29 @@ postgres-data/
 .cache/
 *.tgz
 .npm/
+
+# 2026 security/compliance additions
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+*.secrets
+secrets.*
+.envrc
+.direnv/
+*.env
+!.env.example
+
+# Security and scan outputs
+reports/security/
+reports/compliance/
+artifacts/
+*.sarif
+trivy-report*
+gitleaks-report*
+
+# Cloud credentials
+.aws/
+.azure/
+.gcp/

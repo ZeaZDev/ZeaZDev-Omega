@@ -142,6 +142,28 @@ export class AnalyticsService {
     };
   }
 
+
+
+  getComplianceSnapshot() {
+    const now = new Date();
+    return {
+      generatedAt: now.toISOString(),
+      project: 'zeazdev-omega',
+      standardYear: 2026,
+      controls: {
+        inputValidation: 'enabled',
+        structuredReporting: 'enabled',
+        sbomWorkflow: 'scripted',
+        reproducibleBuild: 'scripted',
+      },
+      environment: {
+        nodeEnv: process.env.NODE_ENV || 'development',
+        hasFrontendUrl: Boolean(process.env.FRONTEND_URL),
+        hasDatabaseUrl: Boolean(process.env.DATABASE_URL),
+      },
+    };
+  }
+
   async generateRecommendations(userId: string) {
     const behavior = await this.analyzeUserBehavior(userId);
     const recommendations: string[] = [];
