@@ -40,7 +40,7 @@ export class GameService {
   async playSlots(
     userId: string,
     betAmount: string,
-    tokenUsed: 'ZEA' | 'DING',
+    tokenUsed: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB',
     txHash: string,
   ) {
     try {
@@ -296,7 +296,7 @@ export class GameService {
     userId: string,
     smallBlind: string,
     bigBlind: string,
-    token: 'ZEA' | 'DING'
+    token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB'
   ) {
     try {
       // Create poker game session
@@ -418,7 +418,7 @@ export class GameService {
     betAmount: string,
     betType: 'number' | 'color' | 'even-odd' | 'high-low',
     betValue: string | number,
-    token: 'ZEA' | 'DING'
+    token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB'
   ) {
     try {
       const session = await this.prisma.gameSession.create({
@@ -571,7 +571,7 @@ export class GameService {
     eventId: number,
     prediction: 'TEAM_A' | 'TEAM_B' | 'DRAW',
     betAmount: string,
-    token: 'ZEA' | 'DING'
+    token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB'
   ) {
     try {
       const { events } = await this.getSportsEvents();

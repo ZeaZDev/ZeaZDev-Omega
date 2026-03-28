@@ -87,9 +87,9 @@ export class RewardsService {
 
       // Determine reward amounts
       const rewardAmounts = {
-        daily_checkin: { ZEA: '100000000000000000000', DING: '10000000000000000000000' }, // 100 ZEA, 10000 DING
-        airdrop: { ZEA: '1000000000000000000000', DING: '20000000000000000000000' }, // 1000 ZEA, 20000 DING
-        referral: { ZEA: '500000000000000000000', DING: '0' }, // 500 ZEA
+        daily_checkin: { ZEA: '100000000000000000000', ZEAZ: '10000000000000000000000', ZUSD: '0', ZTHB: '0' }, // 100 ZEA, 10000 ZEAZ
+        airdrop: { ZEA: '1000000000000000000000', ZEAZ: '20000000000000000000000', ZUSD: '0', ZTHB: '0' }, // 1000 ZEA, 20000 ZEAZ
+        referral: { ZEA: '500000000000000000000', ZEAZ: '0', ZUSD: '0', ZTHB: '0' }, // 500 ZEA
       };
 
       const reward = rewardAmounts[rewardType];

@@ -175,7 +175,7 @@ zeazdev-omega/
 
 ### ✅ Core Features
 - **World ID ZKP Verification**: Sybil-resistant identity for all rewards
-- **Dual Tokenomics**: $ZEA (utility/governance) + $DING (game rewards)
+- **ZEA Ecosystem Tokenomics**: ZEA Token (utility/governance) + ZEAZ Token (game rewards) + ZUSD STABLECOIN + ZTHB STABLECOIN
 - **MetaMask Integration**: Full wallet connectivity
 - **Uniswap Swap**: Decentralized token exchange
 - **Staking**: 10% APY on $ZEA

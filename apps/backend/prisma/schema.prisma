@@ -63,7 +63,7 @@ model GameSession {
   gameType    String // "slots", "poker", etc.
   betAmount   String
   winAmount   String    @default("0")
-  tokenUsed   String // "ZEA" or "DING"
+  tokenUsed   String // "ZEA", "ZEAZ", "ZUSD", or "ZTHB"
   result      String // "WON" or "LOST"
   status      String // "playing", "won", "lost"
   metadata    String? // JSON metadata
@@ -182,7 +182,7 @@ model RewardClaim {
   userId        String
   rewardType    String // "daily_checkin", "airdrop", "referral"
   amount        String
-  tokenType     String // "ZEA" or "DING"
+  tokenType     String // "ZEA", "ZEAZ", "ZUSD", or "ZTHB"
   nullifierHash String    @unique
   txHash        String?   @unique
   claimed       Boolean   @default(false)
@@ -275,7 +275,7 @@ model GameLeaderboard {
 model BridgeTransaction {
   id               String    @id @default(uuid())
   userId           String
-  token            String // "ZEA" or "DING"
+  token            String // "ZEA", "ZEAZ", "ZUSD", or "ZTHB"
   amount           String
   sourceChain      Int // Chain ID
   targetChain      Int // Chain ID
@@ -313,7 +313,7 @@ model PokerGame {
   bigBlind    String
   pot         String    @default("0")
   state       String // "WAITING", "PREFLOP", "FLOP", "TURN", "RIVER", "SHOWDOWN", "ENDED"
-  token       String // "ZEA" or "DING"
+  token       String // "ZEA", "ZEAZ", "ZUSD", or "ZTHB"
   winnerId    String?
   createdAt   DateTime  @default(now())
   completedAt DateTime?
@@ -344,7 +344,7 @@ model SportsBet {
   betType   String // "match_winner", "over_under", etc.
   amount    String
   odds      String
-  token     String // "ZEA" or "DING"
+  token     String // "ZEA", "ZEAZ", "ZUSD", or "ZTHB"
   status    String // "PENDING", "WON", "LOST", "CANCELLED"
   payout    String    @default("0")
   createdAt DateTime  @default(now())

@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title ZeaSportsBetting
- * @notice Decentralized sports betting platform with ZEA/DING wagering
+ * @notice Decentralized sports betting platform with ZEA/ZEAZ/ZUSD/ZTHB wagering
  * @dev Supports multiple sports, events, and bet types
  * @author ZeaZDev Enterprises (OMEGA AI)
  * @custom:version 2.0.0 (Phase 7: Advanced GameFi)

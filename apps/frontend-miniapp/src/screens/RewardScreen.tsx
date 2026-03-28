@@ -24,7 +24,7 @@ export default function RewardScreen() {
       
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Daily Check-in</Text>
-        <Text style={styles.reward}>100 ZEA + 10,000 DING</Text>
+        <Text style={styles.reward}>100 ZEA + 10,000 ZEAZ + ZUSD/ZTHB bonus pool</Text>
         <TouchableOpacity style={styles.button} onPress={handleClaimDaily}>
           <Text style={styles.buttonText}>Claim Daily Reward</Text>
         </TouchableOpacity>
@@ -32,7 +32,7 @@ export default function RewardScreen() {
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Airdrop</Text>
-        <Text style={styles.reward}>1,000 ZEA + 20,000 DING</Text>
+        <Text style={styles.reward}>1,000 ZEA + 20,000 ZEAZ + ZUSD/ZTHB bonus pool</Text>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Claim Airdrop</Text>
         </TouchableOpacity>

@@ -62,7 +62,7 @@ export default function SlotMachineScreen() {
   
   // Slot machine state
   const [betAmount, setBetAmount] = useState('10');
-  const [tokenUsed, setTokenUsed] = useState<'ZEA' | 'DING'>('ZEA');
+  const [tokenUsed, setTokenUsed] = useState<'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB'>('ZEA');
   const [slotResult, setSlotResult] = useState<SlotResult | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [useUnity, setUseUnity] = useState(false);
@@ -281,10 +281,23 @@ export default function SlotMachineScreen() {
                 <Text style={styles.tokenText}>ZEA</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.tokenButton, tokenUsed === 'DING' && styles.tokenActive]}
-                onPress={() => setTokenUsed('DING')}
+                style={[styles.tokenButton, tokenUsed === 'ZEAZ' && styles.tokenActive]}
+                onPress={() => setTokenUsed('ZEAZ')}
               >
-                <Text style={styles.tokenText}>DING</Text>
+                <Text style={styles.tokenText}>ZEAZ</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tokenButton, tokenUsed === 'ZUSD' && styles.tokenActive]}
+                onPress={() => setTokenUsed('ZUSD')}
+              >
+                <Text style={styles.tokenText}>ZUSD</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.tokenButton, tokenUsed === 'ZTHB' && styles.tokenActive]}
+                onPress={() => setTokenUsed('ZTHB')}
+              >
+                <Text style={styles.tokenText}>ZTHB</Text>
               </TouchableOpacity>
             </View>
 

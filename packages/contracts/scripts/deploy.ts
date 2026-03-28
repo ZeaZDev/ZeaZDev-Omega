@@ -26,7 +26,7 @@ async function main() {
   const zeaTokenAddress = await zeaToken.getAddress();
   console.log("ZeaToken deployed to:", zeaTokenAddress);
 
-  // Deploy DingToken ($DING)
+  // Deploy DingToken ($ZEAZ)
   console.log("\n2. Deploying DingToken...");
   const DingToken = await ethers.getContractFactory("DingToken");
   const dingToken = await DingToken.deploy(deployer.address);
@@ -105,7 +105,7 @@ async function main() {
   console.log("DEPLOYMENT SUMMARY");
   console.log("======================================");
   console.log("ZeaToken ($ZEA):", zeaTokenAddress);
-  console.log("DingToken ($DING):", dingTokenAddress);
+  console.log("DingToken ($ZEAZ):", dingTokenAddress);
   console.log("ZeaZRewards:", zeazRewardsAddress);
   console.log("ZeaZStake:", zeazStakeAddress);
   console.log("ZeaTreasury:", zeaTreasuryAddress);

@@ -41,7 +41,7 @@ export class GameController {
     @Body() body: {
       userId: string;
       betAmount: string;
-      tokenUsed: 'ZEA' | 'DING';
+      tokenUsed: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
       txHash: string;
     },
   ) {
@@ -77,7 +77,7 @@ export class GameController {
       userId: string;
       smallBlind: string;
       bigBlind: string;
-      token: 'ZEA' | 'DING';
+      token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
     },
   ) {
     return this.gameService.createPokerGame(
@@ -111,7 +111,7 @@ export class GameController {
       betAmount: string;
       betType: 'number' | 'color' | 'even-odd' | 'high-low';
       betValue: string | number;
-      token: 'ZEA' | 'DING';
+      token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
     },
   ) {
     return this.gameService.playRoulette(
@@ -141,7 +141,7 @@ export class GameController {
       eventId: number;
       prediction: 'TEAM_A' | 'TEAM_B' | 'DRAW';
       betAmount: string;
-      token: 'ZEA' | 'DING';
+      token: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
     },
   ) {
     return this.gameService.placeSportsBet(

@@ -19,7 +19,7 @@ export interface SlotGameSession {
   sessionId: string;
   userId: string;
   betAmount: string;
-  tokenUsed: 'ZEA' | 'DING';
+  tokenUsed: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
   symbols: string[];
   result: 'won' | 'lost';
   winAmount: string;
@@ -88,7 +88,7 @@ export class GameFiService {
   async spinSlotMachine(
     userId: string,
     betAmount: string,
-    tokenUsed: 'ZEA' | 'DING',
+    tokenUsed: 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB',
   ): Promise<SlotGameSession> {
     try {
       // Generate provably fair seed

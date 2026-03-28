@@ -14,6 +14,8 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { ethers } from 'ethers';
 
+type TokenSymbol = 'ZEA' | 'ZEAZ' | 'ZUSD' | 'ZTHB';
+
 export interface ChainConfig {
   chainId: number;
   name: string;
@@ -26,13 +28,15 @@ export interface ChainConfig {
   };
   bridgeAddress?: string;
   zeaTokenAddress?: string;
-  dingTokenAddress?: string;
+  zeazTokenAddress?: string;
+  zusdTokenAddress?: string;
+  zthbTokenAddress?: string;
 }
 
 export interface BridgeTransaction {
   id: string;
   userId: string;
-  token: string;
+  token: TokenSymbol;
   amount: string;
   sourceChain: number;
   targetChain: number;
@@ -56,7 +60,7 @@ export interface BridgeQuote {
 }
 
 export interface LiquidityInfo {
-  token: string;
+  token: TokenSymbol;
   totalLiquidity: string;
   userShares: string;
   userValue: string;
@@ -68,6 +72,7 @@ export class BridgeService {
   private readonly BRIDGE_FEE_BPS = 10; // 0.1%
   private readonly LP_FEE_BPS = 5; // 0.05%
   private readonly FEE_DENOMINATOR = 10000;
+  private readonly SUPPORTED_TOKENS: TokenSymbol[] = ['ZEA', 'ZEAZ', 'ZUSD', 'ZTHB'];
 
   // Chain configurations
   private readonly CHAIN_CONFIGS: Map<number, ChainConfig> = new Map([
@@ -170,12 +175,13 @@ export class BridgeService {
    */
   async getLiquidityInfo(
     userId: string,
-    token: string,
+    token: TokenSymbol,
     chainId: number,
   ): Promise<LiquidityInfo> {
     if (!this.isSupportedChain(chainId)) {
       throw new HttpException('Unsupported chain', HttpStatus.BAD_REQUEST);
     }
+    this.assertSupportedToken(token);
 
     // TODO: Get actual liquidity from smart contract
     // For now, return mock data
@@ -193,13 +199,14 @@ export class BridgeService {
    */
   async addLiquidity(
     userId: string,
-    token: string,
+    token: TokenSymbol,
     amount: string,
     chainId: number,
   ): Promise<{ success: boolean; shares: string; transactionHash: string }> {
     if (!this.isSupportedChain(chainId)) {
       throw new HttpException('Unsupported chain', HttpStatus.BAD_REQUEST);
     }
+    this.assertSupportedToken(token);
 
     // TODO: Interact with smart contract
     // For now, return success
@@ -215,13 +222,14 @@ export class BridgeService {
    */
   async removeLiquidity(
     userId: string,
-    token: string,
+    token: TokenSymbol,
     shares: string,
     chainId: number,
   ): Promise<{ success: boolean; amount: string; transactionHash: string }> {
     if (!this.isSupportedChain(chainId)) {
       throw new HttpException('Unsupported chain', HttpStatus.BAD_REQUEST);
     }
+    this.assertSupportedToken(token);
 
     // TODO: Interact with smart contract
     return {
@@ -236,7 +244,7 @@ export class BridgeService {
    */
   async initiateBridge(
     userId: string,
-    token: string,
+    token: TokenSymbol,
     amount: string,
     sourceChain: number,
     targetChain: number,
@@ -249,6 +257,7 @@ export class BridgeService {
     if (sourceChain === targetChain) {
       throw new Error('Source and target chains must be different');
     }
+    this.assertSupportedToken(token);
 
     // Create bridge transaction record
     const bridgeTx = await this.prisma.bridgeTransaction.create({
@@ -327,6 +336,15 @@ export class BridgeService {
    */
   private isSupportedChain(chainId: number): boolean {
     return this.CHAIN_CONFIGS.has(chainId);
+  }
+
+  private assertSupportedToken(token: string): asserts token is TokenSymbol {
+    if (!this.SUPPORTED_TOKENS.includes(token as TokenSymbol)) {
+      throw new HttpException(
+        `Unsupported token: ${token}. Supported tokens: ${this.SUPPORTED_TOKENS.join(', ')}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   /**

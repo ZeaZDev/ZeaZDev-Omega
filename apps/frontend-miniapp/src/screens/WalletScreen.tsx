@@ -16,7 +16,9 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 export default function WalletScreen() {
   const [balances, setBalances] = useState({
     ZEA: '0',
-    DING: '0',
+    ZEAZ: '0',
+    ZUSD: '0',
+    ZTHB: '0',
     ETH: '0',
   });
 
@@ -30,8 +32,18 @@ export default function WalletScreen() {
       </View>
 
       <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>$DING Balance</Text>
-        <Text style={styles.balanceValue}>{balances.DING}</Text>
+        <Text style={styles.balanceLabel}>$ZEAZ Balance</Text>
+        <Text style={styles.balanceValue}>{balances.ZEAZ}</Text>
+      </View>
+
+      <View style={styles.balanceCard}>
+        <Text style={styles.balanceLabel}>$ZUSD Balance</Text>
+        <Text style={styles.balanceValue}>{balances.ZUSD}</Text>
+      </View>
+
+      <View style={styles.balanceCard}>
+        <Text style={styles.balanceLabel}>$ZTHB Balance</Text>
+        <Text style={styles.balanceValue}>{balances.ZTHB}</Text>
       </View>
 
       <View style={styles.balanceCard}>

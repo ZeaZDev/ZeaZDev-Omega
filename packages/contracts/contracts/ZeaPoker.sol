@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**
  * @title ZeaPoker
- * @notice Decentralized poker game with ZEA/DING betting
+ * @notice Decentralized poker game with ZEA/ZEAZ/ZUSD/ZTHB betting
  * @dev Texas Hold'em style poker game
  */
 contract ZeaPoker is Ownable, ReentrancyGuard, Pausable {
@@ -51,7 +51,7 @@ contract ZeaPoker is Ownable, ReentrancyGuard, Pausable {
         address currentPlayer;
         address dealer;
         bool isActive;
-        address token; // ZEA or DING
+        address token; // ZEA, ZEAZ, ZUSD, or ZTHB
     }
 
     // Game tracking
